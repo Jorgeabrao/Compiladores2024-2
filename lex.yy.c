@@ -1012,7 +1012,7 @@ case YY_STATE_EOF(INITIAL):
 case 31:
 YY_RULE_SETUP
 #line 92 "lexical.l"
-{ printf("Token: Invalid Token, LEXEMA: %s\n", yytext); }
+{ printf("\033[31m");printf("Lexical error: Invalid Token, LEXEMA: %s, LINHA: %d\n", yytext, yylineno);printf("\033[0m"); //printf("Lexical error: Invalid Token, LEXEMA: %s, LINHA: %d, COLUNA: %d\n", yytext, yylineno, column);}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
