@@ -89,7 +89,7 @@ whitespace  [ \t\r\n]
 {whitespace}+ { update_position(yytext); if(v == 'y' || v == 'Y')printf("Token: VAZIO\n"); }
 "{"({letter}|{digit}|{symbol}|{whitespace}|;)*"}" { update_position(yytext); printf("Token: COMENTARIO, LEXEMA: %s\n", yytext);  }
 <<EOF>> { printf("Token: FIM_DE_ARQ\n"); return 0; }
-.  { printf("\033[31m");printf("Token: Invalid Token, LEXEMA: %s, LINHA: %d\n", yytext, yylineno);printf("\033[0m"); }
+.  { printf("\033[31mLexical error: Invalid Token, LEXEMA: %s, LINHA: %d, COLUNA: %d\033[0m\n", yytext, line_num, column_num); }
 
 %%
 

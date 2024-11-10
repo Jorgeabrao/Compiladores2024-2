@@ -186,7 +186,7 @@ eof:
 %%
 
 void yyerror(const char *s) {
-    printf("\033[31m");printf("Syntax error: Erro de sintaxe na linha %d, coluna %d: %s\n", line_num, col_num, s);printf("\033[0m");
+    printf("\033[31m"Syntax error: Erro de sintaxe na linha %d, coluna %d: %s\033[0m\n", line_num, col_num, s);
 }
 
 int checkType(const char *name, char *encounteredType) {
