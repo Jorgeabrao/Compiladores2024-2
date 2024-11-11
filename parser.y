@@ -8,10 +8,12 @@
 extern int yylex();
 extern int yyparse();
 extern FILE *yyin;
+void production_print(const char* production);
 void yyerror(const char *s);
 extern struct hashMap *sym_table;
 
-int verb = 0; //1 to activate verbose mode
+int verb = 1; //1 to activate verbose mode
+char* aux;
 int i = 0;
 int error = 0;
 extern int line_num;
@@ -37,98 +39,98 @@ extern int col_num;
 
 %%
 programa:
-    FUNCAO assinatura {print_production("programa -> FUNCAO assinatura");}
+    FUNCAO assinatura {production_print("programa -> FUNCAO assinatura");}
     ;
 
 assinatura:
-    nome_funcao args {print_production("assinatura -> nome_funcao args");}
-    | nome_funcao TIPO tipo_funcao args {print_production("assinatura -> nome_funcao TIPO tipo_funcao args");}
+    nome_funcao args {production_print("assinatura -> nome_funcao args");}
+    | nome_funcao TIPO tipo_funcao args {production_print("assinatura -> nome_funcao TIPO tipo_funcao args");}
     ;
 
 tipo_funcao:
-    CARACTERE {print_production("tipo_funcao -> CARACTERE");}
-    | INTEIRO {print_production("tipo_funcao -> INTEIRO");}
-    | REAL {print_production("tipo_funcao -> REAL");}
+    CARACTERE {production_print("tipo_funcao -> CARACTERE");}
+    | INTEIRO {production_print("tipo_funcao -> INTEIRO");}
+    | REAL {production_print("tipo_funcao -> REAL");}
     ;
 
 args:
-    ARGS lista_vars FIMARGS codigo {print_production("args -> ARGS lista_vars FIMARGS codigo");}
-    | codigo {print_production("args -> codigo");}
+    ARGS lista_vars FIMARGS codigo {production_print("args -> ARGS lista_vars FIMARGS codigo");}
+    | codigo {production_print("args -> codigo");}
     ;
 
 lista_vars:
-    vars {print_production("lista_vars -> vars");}
-    | lista_vars vars {print_production("lista_vars -> lista_vars vars");}
+    vars {production_print("lista_vars -> vars");}
+    | lista_vars vars {production_print("lista_vars -> lista_vars vars");}
     ;
 
 vars:
-    tipo ID_OU_FUNC PONTO_E_VIRG {print_production("vars -> tipo ID_OU_FUNC PONTO_E_VIRG");}
-    | tipo ID_OU_FUNC VIRGULA vars_cont {print_production("vars -> tipo ID_OU_FUNC VIRGULA vars_cont");}
-    | tipo ID_OU_FUNC ATRIBUICAO atribuido {print_production("vars -> tipo ID_OU_FUNC ATRIBUICAO atribuido");}
+    tipo ID_OU_FUNC PONTO_E_VIRG {production_print("vars -> tipo ID_OU_FUNC PONTO_E_VIRG");}
+    | tipo ID_OU_FUNC VIRGULA vars_cont {production_print("vars -> tipo ID_OU_FUNC VIRGULA vars_cont");}
+    | tipo ID_OU_FUNC ATRIBUICAO atribuido {production_print("vars -> tipo ID_OU_FUNC ATRIBUICAO atribuido");}
     ;
 
 vars_cont:
-    ID_OU_FUNC VIRGULA vars_cont {print_production("vars_cont -> ID_OU_FUNC VIRGULA vars_cont");}
-    | ID_OU_FUNC PONTO_E_VIRG {print_production("vars_cont -> ID_OU_FUNC PONTO_E_VIRG");}
+    ID_OU_FUNC VIRGULA vars_cont {production_print("vars_cont -> ID_OU_FUNC VIRGULA vars_cont");}
+    | ID_OU_FUNC PONTO_E_VIRG {production_print("vars_cont -> ID_OU_FUNC PONTO_E_VIRG");}
     ;
 
 tipo:
-    CARACTERE {print_production("tipo -> CARACTERE");}
-    | INTEIRO {print_production("tipo -> INTEIRO");}
-    | REAL {print_production("tipo -> REAL");}
+    CARACTERE {production_print("tipo -> CARACTERE");}
+    | INTEIRO {production_print("tipo -> INTEIRO");}
+    | REAL {production_print("tipo -> REAL");}
     ;
 
 codigo:
-    vars codigo {print_production("codigo -> vars codigo");}
-    | ESCREVA LITERAL PONTO_E_VIRG codigo {print_production("codigo -> ESCREVA LITERAL PONTO_E_VIRG codigo");}
-    | ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo {print_production("codigo -> ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo");}
-    | ID_OU_FUNC ATRIBUICAO atribuido codigo {print_production("codigo -> ID_OU_FUNC ATRIBUICAO atribuido codigo");}
-    | CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo {print_production("codigo -> CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo");}
-    | se_entao codigo {print_production("codigo -> se_entao codigo");}
-    | ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo {print_production("codigo -> ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo");}
-    | RETORNA ID_OU_FUNC PONTO_E_VIRG codigo {print_production("codigo -> RETORNA ID_OU_FUNC PONTO_E_VIRG codigo");}
-    | FIMFUNCAO eof {print_production("codigo -> FIMFUNCAO");}
-    | FIMFUNCAO programa {print_production("codigo -> FIMFUNCAO");}
-    | {print_production("codigo -> epsilon");}
+    vars codigo {production_print("codigo -> vars codigo");}
+    | ESCREVA LITERAL PONTO_E_VIRG codigo {production_print("codigo -> ESCREVA LITERAL PONTO_E_VIRG codigo");}
+    | ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo {production_print("codigo -> ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo");}
+    | ID_OU_FUNC ATRIBUICAO atribuido codigo {production_print("codigo -> ID_OU_FUNC ATRIBUICAO atribuido codigo");}
+    | CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo {production_print("codigo -> CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo");}
+    | se_entao codigo {production_print("codigo -> se_entao codigo");}
+    | ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo {production_print("codigo -> ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo");}
+    | RETORNA ID_OU_FUNC PONTO_E_VIRG codigo {production_print("codigo -> RETORNA ID_OU_FUNC PONTO_E_VIRG codigo");}
+    | FIMFUNCAO eof {production_print("codigo -> FIMFUNCAO");}
+    | FIMFUNCAO programa {production_print("codigo -> FIMFUNCAO");}
+    | {production_print("codigo -> epsilon");}
     ;
 
 atribuido:
-    LITERAL PONTO_E_VIRG {print_production("atribuido -> LITERAL PONTO_E_VIRG");}
-    | NUMERO PONTO_E_VIRG {print_production("atribuido -> NUMERO PONTO_E_VIRG");}
-    | ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG {print_production("atribuido -> ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG");}
-    | ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG {print_production("atribuido -> ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG");}
-    | ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG {print_production("atribuido -> ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG");}
-    | CHAMA CHAMADA lista_id PONTO_E_VIRG {print_production("atribuido -> CHAMA CHAMADA lista_id PONTO_E_VIRG");}
+    LITERAL PONTO_E_VIRG {production_print("atribuido -> LITERAL PONTO_E_VIRG");}
+    | NUMERO PONTO_E_VIRG {production_print("atribuido -> NUMERO PONTO_E_VIRG");}
+    | ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG");}
+    | ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG");}
+    | ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG");}
+    | CHAMA CHAMADA lista_id PONTO_E_VIRG {production_print("atribuido -> CHAMA CHAMADA lista_id PONTO_E_VIRG");}
     ;
 
 lista_id:
-    ID_OU_FUNC lista_id {print_production("lista_id -> ID_OU_FUNC lista_id");}
-    | {print_production("lista_id -> epsilon");}
+    ID_OU_FUNC lista_id {production_print("lista_id -> ID_OU_FUNC lista_id");}
+    | {production_print("lista_id -> epsilon");}
     ;
 
 se_entao:
-    SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE {print_production("se_entao -> SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE");}
+    SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE {production_print("se_entao -> SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE");}
     ;
 
 senao_op:
-    SENAO codigo {print_production("senao_op -> SENAO codigo");}
-    | {print_production("senao_op -> epsilon");}
+    SENAO codigo {production_print("senao_op -> SENAO codigo");}
+    | {production_print("senao_op -> epsilon");}
     ;
 
 cond:
-    ID_OU_FUNC OP_RELACIONAL ID_OU_FUNC {print_production("cond -> ID_OU_FUNC OP_RELACIONAL ID_OU_FUNC");}
-    | ID_OU_FUNC OP_RELACIONAL NUMERO {print_production("cond -> ID_OU_FUNC OP_RELACIONAL NUMERO");}
-    | ID_OU_FUNC OP_RELACIONAL LITERAL {print_production("cond -> ID_OU_FUNC OP_RELACIONAL LITERAL");}
-    | NUMERO OP_RELACIONAL ID_OU_FUNC {print_production("cond -> NUMERO OP_RELACIONAL ID_OU_FUNC");}
-    | NUMERO OP_RELACIONAL NUMERO {print_production("cond -> NUMERO OP_RELACIONAL NUMERO");}
-    | NUMERO OP_RELACIONAL LITERAL {print_production("cond -> NUMERO OP_RELACIONAL LITERAL");}
-    | LITERAL OP_RELACIONAL ID_OU_FUNC {print_production("cond -> LITERAL OP_RELACIONAL ID_OU_FUNC");}
-    | LITERAL OP_RELACIONAL NUMERO {print_production("cond -> LITERAL OP_RELACIONAL NUMERO");}
-    | LITERAL OP_RELACIONAL LITERAL {print_production("cond -> LITERAL OP_RELACIONAL LITERAL");}
+    ID_OU_FUNC OP_RELACIONAL ID_OU_FUNC {production_print("cond -> ID_OU_FUNC OP_RELACIONAL ID_OU_FUNC");}
+    | ID_OU_FUNC OP_RELACIONAL NUMERO {production_print("cond -> ID_OU_FUNC OP_RELACIONAL NUMERO");}
+    | ID_OU_FUNC OP_RELACIONAL LITERAL {production_print("cond -> ID_OU_FUNC OP_RELACIONAL LITERAL");}
+    | NUMERO OP_RELACIONAL ID_OU_FUNC {production_print("cond -> NUMERO OP_RELACIONAL ID_OU_FUNC");}
+    | NUMERO OP_RELACIONAL NUMERO {production_print("cond -> NUMERO OP_RELACIONAL NUMERO");}
+    | NUMERO OP_RELACIONAL LITERAL {production_print("cond -> NUMERO OP_RELACIONAL LITERAL");}
+    | LITERAL OP_RELACIONAL ID_OU_FUNC {production_print("cond -> LITERAL OP_RELACIONAL ID_OU_FUNC");}
+    | LITERAL OP_RELACIONAL NUMERO {production_print("cond -> LITERAL OP_RELACIONAL NUMERO");}
+    | LITERAL OP_RELACIONAL LITERAL {production_print("cond -> LITERAL OP_RELACIONAL LITERAL");}
     ;
 
 nome_funcao:
-    ID_OU_FUNC {print_production("nome_funcao -> ID_OU_FUNC");}
+    ID_OU_FUNC {production_print("nome_funcao -> ID_OU_FUNC");}
     ;
 
 eof:

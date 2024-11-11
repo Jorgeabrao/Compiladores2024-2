@@ -822,199 +822,180 @@ YY_RULE_SETUP
     categoria = 1; 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: FUNCAO, LEXEMA: %s\n", yytext);
     return FUNCAO; 
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 30 "lexical.l"
+#line 29 "lexical.l"
 { 
     update_position(yytext); 
     yylval.str = strdup(yytext); 
     escopo = "global";
-    printf("TOKEN: FIMFUNCAO, LEXEMA: %s\n", yytext);
     return FIMFUNCAO; 
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 37 "lexical.l"
+#line 35 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: CHAMA, LEXEMA: %s\n", yytext);
     return CHAMA; 
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 43 "lexical.l"
+#line 40 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: RETORNA, LEXEMA: %s\n", yytext);
     return RETORNA; 
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 49 "lexical.l"
+#line 45 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: TIPO, LEXEMA: %s\n", yytext);
     return TIPO; 
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 55 "lexical.l"
+#line 50 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
-    update_position(yytext);
-    printf("TOKEN: ARGS, LEXEMA: %s\n", yytext); 
+    update_position(yytext); 
     return ARGS; 
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 61 "lexical.l"
+#line 55 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: FIMARGS, LEXEMA: %s\n", yytext);
     return FIMARGS; 
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 67 "lexical.l"
+#line 60 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: ESCREVA, LEXEMA: %s\n", yytext); 
     return ESCREVA; 
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 73 "lexical.l"
+#line 65 "lexical.l"
 { 
     categoria = 3; 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: INTEIRO, LEXEMA: %s\n", yytext);
     return INTEIRO; 
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 80 "lexical.l"
+#line 71 "lexical.l"
 {
     categoria = 4; 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: REAL, LEXEMA: %s\n", yytext);
     return REAL; 
 }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 87 "lexical.l"
+#line 77 "lexical.l"
 { 
     categoria = 5; 
     yylval.str = strdup(yytext); 
-    update_position(yytext); 
-    printf("TOKEN: CARACTERE, LEXEMA: %s\n", yytext);
+    update_position(yytext);
     return CARACTERE; 
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 94 "lexical.l"
+#line 83 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: SE, LEXEMA: %s\n", yytext);
     return SE; 
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 100 "lexical.l"
+#line 88 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: ENTAO, LEXEMA: %s\n", yytext);
     return ENTAO; 
 }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 106 "lexical.l"
+#line 93 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: SENAO, LEXEMA: %s\n", yytext);
     return SENAO; 
 }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 112 "lexical.l"
+#line 98 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: FIMSE, LEXEMA: %s\n", yytext);
     return FIMSE; 
 }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 118 "lexical.l"
+#line 103 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: ENQUANTO, LEXEMA: %s\n", yytext);
     return ENQUANTO; 
 }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 124 "lexical.l"
+#line 108 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
-    update_position(yytext);
-    printf("TOKEN: FACA, LEXEMA: %s\n", yytext); 
+    update_position(yytext); 
     return FACA; 
 }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 130 "lexical.l"
+#line 113 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: FIMENQUANTO, LEXEMA: %s\n", yytext);
     return FIMENQUANTO; 
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 136 "lexical.l"
+#line 118 "lexical.l"
 { 
     categoria = 2; 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: CHAMADA, LEXEMA: %s\n", yytext);
     return CHAMADA; 
 }
 	YY_BREAK
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 143 "lexical.l"
+#line 124 "lexical.l"
 { 
     line_num++; 
     col_num = 1; 
@@ -1022,11 +1003,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 147 "lexical.l"
+#line 128 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: ID_OU_FUNC, LEXEMA: %s\n", yytext);
     if(categoria == 1){
         insert_symbol(sym_table, yytext, "funcao", escopo);
         escopo = strdup(yytext);
@@ -1046,132 +1026,121 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 167 "lexical.l"
+#line 147 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: NUMERO, LEXEMA: %s\n", yytext);
     return NUMERO;
 }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 173 "lexical.l"
+#line 152 "lexical.l"
 {
     yylval.str = strdup(yytext); 
-    update_position(yytext);
-    printf("TOKEN: LITERAL_CONST, LEXEMA: %s\n", yytext); 
+    update_position(yytext); 
     return LITERAL; 
 }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 179 "lexical.l"
+#line 157 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: OP_RELACIONAL, LEXEMA: %s\n", yytext);
     return OP_RELACIONAL;
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 185 "lexical.l"
+#line 162 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: OP_ARITMETICO, LEXEMA: %s\n", yytext);
     return OP_ARITMETICO; 
 }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 191 "lexical.l"
+#line 167 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: ATRIBUICAO, LEXEMA: %s\n", yytext); 
     return ATRIBUICAO; 
 }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 197 "lexical.l"
+#line 172 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: ABRE_PAR, LEXEMA: %s\n", yytext);
     return ABRE_PAR; 
 }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 203 "lexical.l"
+#line 177 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: FECHA_PAR, LEXEMA: %s\n", yytext); 
     return FECHA_PAR; 
 }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 209 "lexical.l"
+#line 182 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
-    printf("TOKEN: VIRGULA, LEXEMA: %s\n", yytext); 
     return VIRGULA; 
 }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 215 "lexical.l"
+#line 187 "lexical.l"
 { 
     categoria = 0; 
     yylval.str = strdup(yytext); 
-    update_position(yytext); 
-    printf("TOKEN: PONTO_E_VIRG, LEXEMA: %s\n", yytext);
+    update_position(yytext);
     return PONTO_E_VIRG; 
 }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 222 "lexical.l"
+#line 193 "lexical.l"
 { 
     update_position(yytext);
 }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 225 "lexical.l"
+#line 196 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
-    update_position(yytext); 
-    printf("TOKEN: COMENTARIO, LEXEMA: %s\n", yytext);
+    update_position(yytext);
     return COMENTARIO; 
 }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 231 "lexical.l"
-{ 
-    printf("TOKEN: FIM_DE_ARQ\n");
+#line 201 "lexical.l"
+{
     return FIM_DE_ARQ; 
 }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 235 "lexical.l"
+#line 204 "lexical.l"
 { 
     fprintf(stderr, "\033[31mLexical error: Invalid Token, LEXEMA: %s, LINHA: %d, COLUNA: %d\033[0m\n", yytext, line_num, col_num); 
 }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 240 "lexical.l"
+#line 209 "lexical.l"
 ECHO;
 	YY_BREAK
-#line 1175 "lex.yy.c"
+#line 1144 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2174,7 +2143,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 240 "lexical.l"
+#line 209 "lexical.l"
 
 
 void update_position(const char *text) {

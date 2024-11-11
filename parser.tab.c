@@ -77,17 +77,19 @@
 extern int yylex();
 extern int yyparse();
 extern FILE *yyin;
+void production_print(const char* production);
 void yyerror(const char *s);
 extern struct hashMap *sym_table;
 
-int verb = 0; //1 to activate verbose mode
+int verb = 1; //1 to activate verbose mode
+char* aux;
 int i = 0;
 int error = 0;
 extern int line_num;
 extern int col_num;
 
 
-#line 91 "parser.tab.c"
+#line 93 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -173,12 +175,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 22 "parser.y"
+#line 24 "parser.y"
 
     char *str;
     int num;
 
-#line 182 "parser.tab.c"
+#line 184 "parser.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -556,12 +558,12 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    40,    40,    44,    45,    49,    50,    51,    55,    56,
-      60,    61,    65,    66,    67,    71,    72,    76,    77,    78,
-      82,    83,    84,    85,    86,    87,    88,    89,    90,    91,
-      92,    96,    97,    98,    99,   100,   101,   105,   106,   108,
-     112,   113,   117,   118,   119,   120,   121,   122,   123,   124,
-     125,   129,   133
+       0,    42,    42,    46,    47,    51,    52,    53,    57,    58,
+      62,    63,    67,    68,    69,    73,    74,    78,    79,    80,
+      84,    85,    86,    87,    88,    89,    90,    91,    92,    93,
+      94,    98,    99,   100,   101,   102,   103,   107,   108,   112,
+     116,   117,   121,   122,   123,   124,   125,   126,   127,   128,
+     129,   133,   137
 };
 #endif
 
@@ -1425,31 +1427,313 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 40 "parser.y"
-                      {}
-#line 1431 "parser.tab.c"
+#line 42 "parser.y"
+                      {production_print("programa -> FUNCAO assinatura");}
+#line 1433 "parser.tab.c"
+    break;
+
+  case 3:
+#line 46 "parser.y"
+                     {production_print("assinatura -> nome_funcao args");}
+#line 1439 "parser.tab.c"
+    break;
+
+  case 4:
+#line 47 "parser.y"
+                                        {production_print("assinatura -> nome_funcao TIPO tipo_funcao args");}
+#line 1445 "parser.tab.c"
+    break;
+
+  case 5:
+#line 51 "parser.y"
+              {production_print("tipo_funcao -> CARACTERE");}
+#line 1451 "parser.tab.c"
+    break;
+
+  case 6:
+#line 52 "parser.y"
+              {production_print("tipo_funcao -> INTEIRO");}
+#line 1457 "parser.tab.c"
+    break;
+
+  case 7:
+#line 53 "parser.y"
+           {production_print("tipo_funcao -> REAL");}
+#line 1463 "parser.tab.c"
+    break;
+
+  case 8:
+#line 57 "parser.y"
+                                   {production_print("args -> ARGS lista_vars FIMARGS codigo");}
+#line 1469 "parser.tab.c"
+    break;
+
+  case 9:
+#line 58 "parser.y"
+             {production_print("args -> codigo");}
+#line 1475 "parser.tab.c"
+    break;
+
+  case 10:
+#line 62 "parser.y"
+         {production_print("lista_vars -> vars");}
+#line 1481 "parser.tab.c"
+    break;
+
+  case 11:
+#line 63 "parser.y"
+                      {production_print("lista_vars -> lista_vars vars");}
+#line 1487 "parser.tab.c"
+    break;
+
+  case 12:
+#line 67 "parser.y"
+                                 {production_print("vars -> tipo ID_OU_FUNC PONTO_E_VIRG");}
+#line 1493 "parser.tab.c"
+    break;
+
+  case 13:
+#line 68 "parser.y"
+                                        {production_print("vars -> tipo ID_OU_FUNC VIRGULA vars_cont");}
+#line 1499 "parser.tab.c"
+    break;
+
+  case 14:
+#line 69 "parser.y"
+                                           {production_print("vars -> tipo ID_OU_FUNC ATRIBUICAO atribuido");}
+#line 1505 "parser.tab.c"
+    break;
+
+  case 15:
+#line 73 "parser.y"
+                                 {production_print("vars_cont -> ID_OU_FUNC VIRGULA vars_cont");}
+#line 1511 "parser.tab.c"
+    break;
+
+  case 16:
+#line 74 "parser.y"
+                              {production_print("vars_cont -> ID_OU_FUNC PONTO_E_VIRG");}
+#line 1517 "parser.tab.c"
+    break;
+
+  case 17:
+#line 78 "parser.y"
+              {production_print("tipo -> CARACTERE");}
+#line 1523 "parser.tab.c"
+    break;
+
+  case 18:
+#line 79 "parser.y"
+              {production_print("tipo -> INTEIRO");}
+#line 1529 "parser.tab.c"
+    break;
+
+  case 19:
+#line 80 "parser.y"
+           {production_print("tipo -> REAL");}
+#line 1535 "parser.tab.c"
+    break;
+
+  case 20:
+#line 84 "parser.y"
+                {production_print("codigo -> vars codigo");}
+#line 1541 "parser.tab.c"
+    break;
+
+  case 21:
+#line 85 "parser.y"
+                                          {production_print("codigo -> ESCREVA LITERAL PONTO_E_VIRG codigo");}
+#line 1547 "parser.tab.c"
+    break;
+
+  case 22:
+#line 86 "parser.y"
+                                             {production_print("codigo -> ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo");}
+#line 1553 "parser.tab.c"
+    break;
+
+  case 23:
+#line 87 "parser.y"
+                                             {production_print("codigo -> ID_OU_FUNC ATRIBUICAO atribuido codigo");}
+#line 1559 "parser.tab.c"
+    break;
+
+  case 24:
+#line 88 "parser.y"
+                                                   {production_print("codigo -> CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo");}
+#line 1565 "parser.tab.c"
+    break;
+
+  case 25:
+#line 89 "parser.y"
+                      {production_print("codigo -> se_entao codigo");}
+#line 1571 "parser.tab.c"
+    break;
+
+  case 26:
+#line 90 "parser.y"
+                                                                      {production_print("codigo -> ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo");}
+#line 1577 "parser.tab.c"
+    break;
+
+  case 27:
+#line 91 "parser.y"
+                                             {production_print("codigo -> RETORNA ID_OU_FUNC PONTO_E_VIRG codigo");}
+#line 1583 "parser.tab.c"
+    break;
+
+  case 28:
+#line 92 "parser.y"
+                    {production_print("codigo -> FIMFUNCAO");}
+#line 1589 "parser.tab.c"
+    break;
+
+  case 29:
+#line 93 "parser.y"
+                         {production_print("codigo -> FIMFUNCAO");}
+#line 1595 "parser.tab.c"
+    break;
+
+  case 30:
+#line 94 "parser.y"
+      {production_print("codigo -> epsilon");}
+#line 1601 "parser.tab.c"
+    break;
+
+  case 31:
+#line 98 "parser.y"
+                         {production_print("atribuido -> LITERAL PONTO_E_VIRG");}
+#line 1607 "parser.tab.c"
+    break;
+
+  case 32:
+#line 99 "parser.y"
+                          {production_print("atribuido -> NUMERO PONTO_E_VIRG");}
+#line 1613 "parser.tab.c"
+    break;
+
+  case 33:
+#line 100 "parser.y"
+                                                    {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG");}
+#line 1619 "parser.tab.c"
+    break;
+
+  case 34:
+#line 101 "parser.y"
+                                                   {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG");}
+#line 1625 "parser.tab.c"
+    break;
+
+  case 35:
+#line 102 "parser.y"
+                                                       {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG");}
+#line 1631 "parser.tab.c"
+    break;
+
+  case 36:
+#line 103 "parser.y"
+                                          {production_print("atribuido -> CHAMA CHAMADA lista_id PONTO_E_VIRG");}
+#line 1637 "parser.tab.c"
+    break;
+
+  case 37:
+#line 107 "parser.y"
+                        {production_print("lista_id -> ID_OU_FUNC lista_id");}
+#line 1643 "parser.tab.c"
+    break;
+
+  case 38:
+#line 108 "parser.y"
+      {production_print("lista_id -> epsilon");}
+#line 1649 "parser.tab.c"
+    break;
+
+  case 39:
+#line 112 "parser.y"
+                                                           {production_print("se_entao -> SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE");}
+#line 1655 "parser.tab.c"
+    break;
+
+  case 40:
+#line 116 "parser.y"
+                 {production_print("senao_op -> SENAO codigo");}
+#line 1661 "parser.tab.c"
+    break;
+
+  case 41:
+#line 117 "parser.y"
+      {production_print("senao_op -> epsilon");}
+#line 1667 "parser.tab.c"
     break;
 
   case 42:
-#line 117 "parser.y"
-                                        {}
-#line 1437 "parser.tab.c"
+#line 121 "parser.y"
+                                        {production_print("cond -> ID_OU_FUNC OP_RELACIONAL ID_OU_FUNC");}
+#line 1673 "parser.tab.c"
     break;
 
   case 43:
-#line 118 "parser.y"
-                                      {}
-#line 1443 "parser.tab.c"
+#line 122 "parser.y"
+                                      {production_print("cond -> ID_OU_FUNC OP_RELACIONAL NUMERO");}
+#line 1679 "parser.tab.c"
+    break;
+
+  case 44:
+#line 123 "parser.y"
+                                       {production_print("cond -> ID_OU_FUNC OP_RELACIONAL LITERAL");}
+#line 1685 "parser.tab.c"
+    break;
+
+  case 45:
+#line 124 "parser.y"
+                                      {production_print("cond -> NUMERO OP_RELACIONAL ID_OU_FUNC");}
+#line 1691 "parser.tab.c"
+    break;
+
+  case 46:
+#line 125 "parser.y"
+                                  {production_print("cond -> NUMERO OP_RELACIONAL NUMERO");}
+#line 1697 "parser.tab.c"
+    break;
+
+  case 47:
+#line 126 "parser.y"
+                                   {production_print("cond -> NUMERO OP_RELACIONAL LITERAL");}
+#line 1703 "parser.tab.c"
+    break;
+
+  case 48:
+#line 127 "parser.y"
+                                       {production_print("cond -> LITERAL OP_RELACIONAL ID_OU_FUNC");}
+#line 1709 "parser.tab.c"
+    break;
+
+  case 49:
+#line 128 "parser.y"
+                                   {production_print("cond -> LITERAL OP_RELACIONAL NUMERO");}
+#line 1715 "parser.tab.c"
+    break;
+
+  case 50:
+#line 129 "parser.y"
+                                    {production_print("cond -> LITERAL OP_RELACIONAL LITERAL");}
+#line 1721 "parser.tab.c"
+    break;
+
+  case 51:
+#line 133 "parser.y"
+               {production_print("nome_funcao -> ID_OU_FUNC");}
+#line 1727 "parser.tab.c"
     break;
 
   case 52:
-#line 133 "parser.y"
+#line 137 "parser.y"
                {return 0;}
-#line 1449 "parser.tab.c"
+#line 1733 "parser.tab.c"
     break;
 
 
-#line 1453 "parser.tab.c"
+#line 1737 "parser.tab.c"
 
       default: break;
     }
@@ -1681,12 +1965,18 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 135 "parser.y"
+#line 139 "parser.y"
 
 
 
 void yyerror(const char *s) {
     printf("\033[31mSyntax error: Erro de sintaxe na linha %d, coluna %d: %s\033[0m\n", line_num, col_num, s);
+}
+
+void production_print(const char* production) {
+    if(verb == 1){
+        fprintf(stdout, "Produção utilizada: %s\n", production);
+    }
 }
 
 int main(int argc, char **argv) {
