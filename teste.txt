@@ -1,14 +1,17 @@
-funcao area tipo inteiro
-args
- inteiro base, altura;
-fimargs
-inteiro a = base * altura;
-retorna a;
-fimfuncao
 funcao principal
 args
- inteiro base, altura;
+ caractere letra;
+ inteiro cont;
 fimargs
-inteiro a = chama @area base altura;
-escreva a;
+se(letra==chute) entao
+ escreva "Acertei!";
+fimse
+se (cont < 0) entao
+ escreva "cont < 0";
+fimse
+enquanto (cont > 0) faca
+ escreva letra;
+ escreva "\n";
+ cont = cont - 1;
+fimenquanto
 fimfuncao

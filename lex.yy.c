@@ -534,12 +534,14 @@ int line_num = 1;
 int col_num = 1;
 char *escopo = "global";
 int categoria = 0;
+int eof = 0;
+int func = 0;
 
 void update_position(const char *text);
 struct hashMap *sym_table;
 
-#line 542 "lex.yy.c"
-#line 543 "lex.yy.c"
+#line 544 "lex.yy.c"
+#line 545 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -756,9 +758,9 @@ YY_DECL
 		}
 
 	{
-#line 22 "lexical.l"
+#line 24 "lexical.l"
 
-#line 762 "lex.yy.c"
+#line 764 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -817,8 +819,9 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 23 "lexical.l"
+#line 25 "lexical.l"
 { 
+    func++;
     categoria = 1; 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -827,7 +830,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 29 "lexical.l"
+#line 32 "lexical.l"
 { 
     update_position(yytext); 
     yylval.str = strdup(yytext); 
@@ -837,7 +840,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 35 "lexical.l"
+#line 38 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -846,7 +849,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 40 "lexical.l"
+#line 43 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -855,7 +858,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 45 "lexical.l"
+#line 48 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -864,7 +867,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 50 "lexical.l"
+#line 53 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext); 
@@ -873,7 +876,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 55 "lexical.l"
+#line 58 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -882,7 +885,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 60 "lexical.l"
+#line 63 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -891,7 +894,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 65 "lexical.l"
+#line 68 "lexical.l"
 { 
     categoria = 3; 
     yylval.str = strdup(yytext); 
@@ -901,7 +904,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 71 "lexical.l"
+#line 74 "lexical.l"
 {
     categoria = 4; 
     yylval.str = strdup(yytext); 
@@ -911,7 +914,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 77 "lexical.l"
+#line 80 "lexical.l"
 { 
     categoria = 5; 
     yylval.str = strdup(yytext); 
@@ -921,7 +924,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 83 "lexical.l"
+#line 86 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -930,7 +933,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 88 "lexical.l"
+#line 91 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -939,7 +942,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 93 "lexical.l"
+#line 96 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -948,7 +951,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 98 "lexical.l"
+#line 101 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -957,7 +960,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 103 "lexical.l"
+#line 106 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -966,7 +969,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 108 "lexical.l"
+#line 111 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext); 
@@ -975,7 +978,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 113 "lexical.l"
+#line 116 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -984,7 +987,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 118 "lexical.l"
+#line 121 "lexical.l"
 { 
     categoria = 2; 
     yylval.str = strdup(yytext); 
@@ -995,7 +998,7 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 124 "lexical.l"
+#line 127 "lexical.l"
 { 
     line_num++; 
     col_num = 1; 
@@ -1003,7 +1006,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 128 "lexical.l"
+#line 131 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -1026,7 +1029,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 147 "lexical.l"
+#line 150 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -1035,7 +1038,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 152 "lexical.l"
+#line 155 "lexical.l"
 {
     yylval.str = strdup(yytext); 
     update_position(yytext); 
@@ -1044,7 +1047,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 157 "lexical.l"
+#line 160 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -1053,7 +1056,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 162 "lexical.l"
+#line 165 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -1062,7 +1065,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 167 "lexical.l"
+#line 170 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -1071,7 +1074,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 172 "lexical.l"
+#line 175 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -1080,7 +1083,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 177 "lexical.l"
+#line 180 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -1089,7 +1092,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 182 "lexical.l"
+#line 185 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -1098,7 +1101,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 187 "lexical.l"
+#line 190 "lexical.l"
 { 
     categoria = 0; 
     yylval.str = strdup(yytext); 
@@ -1108,14 +1111,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 193 "lexical.l"
+#line 196 "lexical.l"
 { 
     update_position(yytext);
 }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 196 "lexical.l"
+#line 199 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -1123,24 +1126,25 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 201 "lexical.l"
+#line 204 "lexical.l"
 {
+    eof = 1;
     return FIM_DE_ARQ; 
 }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 204 "lexical.l"
+#line 208 "lexical.l"
 { 
     fprintf(stderr, "\033[31mLexical error: Invalid Token, LEXEMA: %s, LINHA: %d, COLUNA: %d\033[0m\n", yytext, line_num, col_num); 
 }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 209 "lexical.l"
+#line 213 "lexical.l"
 ECHO;
 	YY_BREAK
-#line 1144 "lex.yy.c"
+#line 1148 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2143,7 +2147,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 209 "lexical.l"
+#line 213 "lexical.l"
 
 
 void update_position(const char *text) {

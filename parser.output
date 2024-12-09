@@ -1,6 +1,10 @@
 Terminals unused in grammar
 
     COMENTARIO
+    '+'
+    '-'
+    '*'
+    '/'
 
 
 Grammar
@@ -8,1282 +12,2092 @@ Grammar
     0 $accept: programa $end
 
     1 programa: FUNCAO assinatura
+    2         | error assinatura
 
-    2 assinatura: nome_funcao args
-    3           | nome_funcao TIPO tipo_funcao args
+    3 assinatura: nome_funcao args
+    4           | nome_funcao TIPO tipo_funcao args
+    5           | nome_funcao error tipo_funcao args
 
-    4 tipo_funcao: CARACTERE
-    5            | INTEIRO
-    6            | REAL
+    6 tipo_funcao: CARACTERE
+    7            | INTEIRO
+    8            | REAL
 
-    7 args: ARGS lista_vars FIMARGS codigo
-    8     | codigo
+    9 args: ARGS lista_vars FIMARGS codigo
+   10     | codigo
+   11     | ARGS lista_vars error codigo
 
-    9 lista_vars: vars
-   10           | lista_vars vars
+   12 lista_vars: vars
+   13           | lista_vars vars
 
-   11 vars: tipo ID_OU_FUNC PONTO_E_VIRG
-   12     | tipo ID_OU_FUNC VIRGULA vars_cont
-   13     | tipo ID_OU_FUNC ATRIBUICAO atribuido
+   14 vars: tipo ID_OU_FUNC PONTO_E_VIRG
+   15     | tipo ID_OU_FUNC VIRGULA vars_cont
+   16     | tipo ID_OU_FUNC ATRIBUICAO atribuido
+   17     | tipo error PONTO_E_VIRG
+   18     | tipo ID_OU_FUNC error
+   19     | error ID_OU_FUNC PONTO_E_VIRG
 
-   14 vars_cont: ID_OU_FUNC VIRGULA vars_cont
-   15          | ID_OU_FUNC PONTO_E_VIRG
+   20 vars_cont: ID_OU_FUNC VIRGULA vars_cont
+   21          | ID_OU_FUNC PONTO_E_VIRG
+   22          | error VIRGULA vars_cont
+   23          | ID_OU_FUNC error
 
-   16 tipo: CARACTERE
-   17     | INTEIRO
-   18     | REAL
+   24 tipo: CARACTERE
+   25     | INTEIRO
+   26     | REAL
 
-   19 codigo: vars codigo
-   20       | ESCREVA LITERAL PONTO_E_VIRG codigo
-   21       | ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo
-   22       | ID_OU_FUNC ATRIBUICAO atribuido codigo
-   23       | CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo
-   24       | se_entao codigo
-   25       | ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo
-   26       | RETORNA ID_OU_FUNC PONTO_E_VIRG codigo
-   27       | FIMFUNCAO eof
-   28       | FIMFUNCAO programa
-   29       | %empty
+   27 codigo: vars codigo
+   28       | ESCREVA LITERAL PONTO_E_VIRG codigo
+   29       | ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo
+   30       | ID_OU_FUNC ATRIBUICAO atribuido codigo
+   31       | CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo
+   32       | se_entao codigo
+   33       | ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo
+   34       | RETORNA ID_OU_FUNC PONTO_E_VIRG codigo
+   35       | FIMFUNCAO eof
+   36       | FIMFUNCAO programa
+   37       | %empty
+   38       | ESCREVA ID_OU_FUNC error codigo
+   39       | ESCREVA LITERAL error codigo
+   40       | RETORNA ID_OU_FUNC error
+   41       | error PONTO_E_VIRG codigo
+   42       | error eof
+   43       | error programa
 
-   30 atribuido: LITERAL PONTO_E_VIRG
-   31          | NUMERO PONTO_E_VIRG
-   32          | ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG
-   33          | ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG
-   34          | ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG
-   35          | CHAMA CHAMADA lista_id PONTO_E_VIRG
+   44 atribuido: LITERAL PONTO_E_VIRG
+   45          | NUMERO PONTO_E_VIRG
+   46          | ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG
+   47          | ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG
+   48          | ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG
+   49          | CHAMA CHAMADA lista_id PONTO_E_VIRG
+   50          | error PONTO_E_VIRG
+   51          | ID_OU_FUNC error
+   52          | ID_OU_FUNC OP_ARITMETICO error
 
-   36 lista_id: ID_OU_FUNC lista_id
-   37         | %empty
+   53 lista_id: ID_OU_FUNC lista_id
+   54         | %empty
+   55         | error lista_id
 
-   38 se_entao: SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE
+   56 se_entao: SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE
+   57         | SE error cond FECHA_PAR ENTAO codigo senao_op FIMSE
+   58         | SE ABRE_PAR cond error ENTAO codigo senao_op FIMSE
+   59         | SE ABRE_PAR cond FECHA_PAR error codigo senao_op FIMSE
 
-   39 senao_op: SENAO codigo
-   40         | %empty
+   60 senao_op: SENAO codigo
+   61         | %empty
 
-   41 cond: ID_OU_FUNC OP_RELACIONAL ID_OU_FUNC
-   42     | ID_OU_FUNC OP_RELACIONAL NUMERO
-   43     | ID_OU_FUNC OP_RELACIONAL LITERAL
-   44     | NUMERO OP_RELACIONAL ID_OU_FUNC
-   45     | NUMERO OP_RELACIONAL NUMERO
-   46     | NUMERO OP_RELACIONAL LITERAL
-   47     | LITERAL OP_RELACIONAL ID_OU_FUNC
-   48     | LITERAL OP_RELACIONAL NUMERO
-   49     | LITERAL OP_RELACIONAL LITERAL
+   62 cond: ID_OU_FUNC OP_RELACIONAL ID_OU_FUNC
+   63     | ID_OU_FUNC OP_RELACIONAL NUMERO
+   64     | ID_OU_FUNC OP_RELACIONAL LITERAL
+   65     | NUMERO OP_RELACIONAL ID_OU_FUNC
+   66     | NUMERO OP_RELACIONAL NUMERO
+   67     | NUMERO OP_RELACIONAL LITERAL
+   68     | LITERAL OP_RELACIONAL ID_OU_FUNC
+   69     | LITERAL OP_RELACIONAL NUMERO
+   70     | LITERAL OP_RELACIONAL LITERAL
+   71     | error OP_RELACIONAL ID_OU_FUNC
+   72     | ID_OU_FUNC error ID_OU_FUNC
+   73     | ID_OU_FUNC OP_RELACIONAL error
+   74     | error OP_RELACIONAL NUMERO
+   75     | NUMERO error NUMERO
+   76     | NUMERO OP_RELACIONAL error
+   77     | error OP_RELACIONAL LITERAL
+   78     | LITERAL error LITERAL
+   79     | LITERAL OP_RELACIONAL error
 
-   50 nome_funcao: ID_OU_FUNC
+   80 nome_funcao: ID_OU_FUNC
 
-   51 eof: FIM_DE_ARQ
+   81 eof: FIM_DE_ARQ
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
-    error (256)
+    '*' (42)
+    '+' (43)
+    '-' (45)
+    '/' (47)
+    error <str> (256) 2 5 11 17 18 19 22 23 38 39 40 41 42 43 50 51 52 55 57 58 59 71 72 73 74 75 76 77 78 79
     FUNCAO <str> (258) 1
-    FIMFUNCAO <str> (259) 27 28
-    CHAMA <str> (260) 23 35
-    RETORNA <str> (261) 26
-    TIPO <str> (262) 3
-    ARGS <str> (263) 7
-    FIMARGS <str> (264) 7
-    ESCREVA <str> (265) 20 21
-    INTEIRO <str> (266) 5 17
-    REAL <str> (267) 6 18
-    CARACTERE <str> (268) 4 16
-    SE <str> (269) 38
-    ENTAO <str> (270) 38
-    FIMSE <str> (271) 38
-    ENQUANTO <str> (272) 25
-    FACA <str> (273) 25
-    FIMENQUANTO <str> (274) 25
-    CHAMADA <str> (275) 23 35
-    SENAO <str> (276) 39
-    ID_OU_FUNC <str> (277) 11 12 13 14 15 21 22 23 26 32 33 34 36 41 42 43 44 47 50
-    NUMERO <str> (278) 31 33 42 44 45 46 48
-    LITERAL <str> (279) 20 30 32 43 46 47 48 49
-    OP_RELACIONAL <str> (280) 41 42 43 44 45 46 47 48 49
-    OP_ARITMETICO <str> (281) 32 33 34
-    ATRIBUICAO <str> (282) 13 22
-    ABRE_PAR <str> (283) 25 38
-    FECHA_PAR <str> (284) 25 38
-    VIRGULA <str> (285) 12 14
-    PONTO_E_VIRG <str> (286) 11 15 20 21 23 26 30 31 32 33 34 35
+    FIMFUNCAO <str> (259) 35 36
+    CHAMA <str> (260) 31 49
+    RETORNA <str> (261) 34 40
+    TIPO <str> (262) 4
+    ARGS <str> (263) 9 11
+    FIMARGS <str> (264) 9
+    ESCREVA <str> (265) 28 29 38 39
+    INTEIRO <str> (266) 7 25
+    REAL <str> (267) 8 26
+    CARACTERE <str> (268) 6 24
+    SE <str> (269) 56 57 58 59
+    ENTAO <str> (270) 56 57 58
+    FIMSE <str> (271) 56 57 58 59
+    ENQUANTO <str> (272) 33
+    FACA <str> (273) 33
+    FIMENQUANTO <str> (274) 33
+    CHAMADA <str> (275) 31 49
+    SENAO <str> (276) 60
+    ID_OU_FUNC <str> (277) 14 15 16 18 19 20 21 23 29 30 31 34 38 40 46 47 48 51 52 53 62 63 64 65 68 71 72 73 80
+    NUMERO <str> (278) 45 47 63 65 66 67 69 74 75 76
+    LITERAL <str> (279) 28 39 44 46 64 67 68 69 70 77 78 79
+    OP_RELACIONAL <str> (280) 62 63 64 65 66 67 68 69 70 71 73 74 76 77 79
+    OP_ARITMETICO <str> (281) 46 47 48 52
+    ATRIBUICAO <str> (282) 16 30
+    ABRE_PAR <str> (283) 33 56 58 59
+    FECHA_PAR <str> (284) 33 56 57 59
+    VIRGULA <str> (285) 15 20 22
+    PONTO_E_VIRG <str> (286) 14 17 19 21 28 29 31 34 41 44 45 46 47 48 49 50
     COMENTARIO <str> (287)
-    FIM_DE_ARQ <str> (288) 51
+    FIM_DE_ARQ <str> (288) 81
 
 
 Nonterminals, with rules where they appear
 
-    $accept (34)
+    $accept (38)
         on left: 0
-    programa (35)
-        on left: 1
-        on right: 0 28
-    assinatura (36)
-        on left: 2 3
-        on right: 1
-    tipo_funcao (37)
-        on left: 4 5 6
-        on right: 3
-    args (38)
-        on left: 7 8
-        on right: 2 3
-    lista_vars (39)
-        on left: 9 10
-        on right: 7 10
-    vars (40)
-        on left: 11 12 13
-        on right: 9 10 19
-    vars_cont (41)
-        on left: 14 15
-        on right: 12 14
-    tipo (42)
-        on left: 16 17 18
-        on right: 11 12 13
-    codigo (43)
-        on left: 19 20 21 22 23 24 25 26 27 28 29
-        on right: 7 8 19 20 21 22 23 24 25 26 38 39
-    atribuido (44)
-        on left: 30 31 32 33 34 35
-        on right: 13 22
-    lista_id (45)
-        on left: 36 37
-        on right: 35 36
-    se_entao (46)
-        on left: 38
-        on right: 24
-    senao_op (47)
-        on left: 39 40
-        on right: 38
-    cond (48)
-        on left: 41 42 43 44 45 46 47 48 49
-        on right: 25 38
-    nome_funcao (49)
-        on left: 50
-        on right: 2 3
-    eof (50)
-        on left: 51
-        on right: 27
+    programa (39)
+        on left: 1 2
+        on right: 0 36 43
+    assinatura <str> (40)
+        on left: 3 4 5
+        on right: 1 2
+    tipo_funcao (41)
+        on left: 6 7 8
+        on right: 4 5
+    args (42)
+        on left: 9 10 11
+        on right: 3 4 5
+    lista_vars (43)
+        on left: 12 13
+        on right: 9 11 13
+    vars (44)
+        on left: 14 15 16 17 18 19
+        on right: 12 13 27
+    vars_cont (45)
+        on left: 20 21 22 23
+        on right: 15 20 22
+    tipo (46)
+        on left: 24 25 26
+        on right: 14 15 16 17 18
+    codigo (47)
+        on left: 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43
+        on right: 9 10 11 27 28 29 30 31 32 33 34 38 39 41 56 57 58 59 60
+    atribuido (48)
+        on left: 44 45 46 47 48 49 50 51 52
+        on right: 16 30
+    lista_id (49)
+        on left: 53 54 55
+        on right: 49 53 55
+    se_entao (50)
+        on left: 56 57 58 59
+        on right: 32
+    senao_op (51)
+        on left: 60 61
+        on right: 56 57 58 59
+    cond (52)
+        on left: 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79
+        on right: 33 56 57 58 59
+    nome_funcao (53)
+        on left: 80
+        on right: 3 4 5
+    eof (54)
+        on left: 81
+        on right: 35 42
 
 
 State 0
 
     0 $accept: . programa $end
 
-    FUNCAO  shift, and go to state 1
+    error   shift, and go to state 1
+    FUNCAO  shift, and go to state 2
 
-    programa  go to state 2
+    programa  go to state 3
 
 
 State 1
 
-    1 programa: FUNCAO . assinatura
+    2 programa: error . assinatura
 
-    ID_OU_FUNC  shift, and go to state 3
+    ID_OU_FUNC  shift, and go to state 4
 
-    assinatura   go to state 4
-    nome_funcao  go to state 5
+    assinatura   go to state 5
+    nome_funcao  go to state 6
 
 
 State 2
 
-    0 $accept: programa . $end
+    1 programa: FUNCAO . assinatura
 
-    $end  shift, and go to state 6
+    ID_OU_FUNC  shift, and go to state 4
+
+    assinatura   go to state 7
+    nome_funcao  go to state 6
 
 
 State 3
 
-   50 nome_funcao: ID_OU_FUNC .
+    0 $accept: programa . $end
 
-    $default  reduce using rule 50 (nome_funcao)
+    $end  shift, and go to state 8
 
 
 State 4
+
+   80 nome_funcao: ID_OU_FUNC .
+
+    $default  reduce using rule 80 (nome_funcao)
+
+
+State 5
+
+    2 programa: error assinatura .
+
+    $default  reduce using rule 2 (programa)
+
+
+State 6
+
+    3 assinatura: nome_funcao . args
+    4           | nome_funcao . TIPO tipo_funcao args
+    5           | nome_funcao . error tipo_funcao args
+
+    error       shift, and go to state 9
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    TIPO        shift, and go to state 13
+    ARGS        shift, and go to state 14
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    args      go to state 22
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 25
+    se_entao  go to state 26
+
+
+State 7
 
     1 programa: FUNCAO assinatura .
 
     $default  reduce using rule 1 (programa)
 
 
-State 5
-
-    2 assinatura: nome_funcao . args
-    3           | nome_funcao . TIPO tipo_funcao args
-
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    TIPO        shift, and go to state 10
-    ARGS        shift, and go to state 11
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
-
-    $default  reduce using rule 29 (codigo)
-
-    args      go to state 19
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 22
-    se_entao  go to state 23
-
-
-State 6
+State 8
 
     0 $accept: programa $end .
 
     $default  accept
 
 
-State 7
-
-   27 codigo: FIMFUNCAO . eof
-   28       | FIMFUNCAO . programa
-
-    FUNCAO      shift, and go to state 1
-    FIM_DE_ARQ  shift, and go to state 24
-
-    programa  go to state 25
-    eof       go to state 26
-
-
-State 8
-
-   23 codigo: CHAMA . CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo
-
-    CHAMADA  shift, and go to state 27
-
-
 State 9
 
-   26 codigo: RETORNA . ID_OU_FUNC PONTO_E_VIRG codigo
+    5 assinatura: nome_funcao error . tipo_funcao args
+   19 vars: error . ID_OU_FUNC PONTO_E_VIRG
+   41 codigo: error . PONTO_E_VIRG codigo
+   42       | error . eof
+   43       | error . programa
 
-    ID_OU_FUNC  shift, and go to state 28
+    error         shift, and go to state 1
+    FUNCAO        shift, and go to state 2
+    INTEIRO       shift, and go to state 27
+    REAL          shift, and go to state 28
+    CARACTERE     shift, and go to state 29
+    ID_OU_FUNC    shift, and go to state 30
+    PONTO_E_VIRG  shift, and go to state 31
+    FIM_DE_ARQ    shift, and go to state 32
+
+    programa     go to state 33
+    tipo_funcao  go to state 34
+    eof          go to state 35
 
 
 State 10
 
-    3 assinatura: nome_funcao TIPO . tipo_funcao args
+   35 codigo: FIMFUNCAO . eof
+   36       | FIMFUNCAO . programa
 
-    INTEIRO    shift, and go to state 29
-    REAL       shift, and go to state 30
-    CARACTERE  shift, and go to state 31
+    error       shift, and go to state 1
+    FUNCAO      shift, and go to state 2
+    FIM_DE_ARQ  shift, and go to state 32
 
-    tipo_funcao  go to state 32
+    programa  go to state 36
+    eof       go to state 37
 
 
 State 11
 
-    7 args: ARGS . lista_vars FIMARGS codigo
+   31 codigo: CHAMA . CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo
 
-    INTEIRO    shift, and go to state 13
-    REAL       shift, and go to state 14
-    CARACTERE  shift, and go to state 15
-
-    lista_vars  go to state 33
-    vars        go to state 34
-    tipo        go to state 21
+    CHAMADA  shift, and go to state 38
 
 
 State 12
 
-   20 codigo: ESCREVA . LITERAL PONTO_E_VIRG codigo
-   21       | ESCREVA . ID_OU_FUNC PONTO_E_VIRG codigo
+   34 codigo: RETORNA . ID_OU_FUNC PONTO_E_VIRG codigo
+   40       | RETORNA . ID_OU_FUNC error
 
-    ID_OU_FUNC  shift, and go to state 35
-    LITERAL     shift, and go to state 36
+    ID_OU_FUNC  shift, and go to state 39
 
 
 State 13
 
-   17 tipo: INTEIRO .
+    4 assinatura: nome_funcao TIPO . tipo_funcao args
 
-    $default  reduce using rule 17 (tipo)
+    INTEIRO    shift, and go to state 27
+    REAL       shift, and go to state 28
+    CARACTERE  shift, and go to state 29
+
+    tipo_funcao  go to state 40
 
 
 State 14
 
-   18 tipo: REAL .
+    9 args: ARGS . lista_vars FIMARGS codigo
+   11     | ARGS . lista_vars error codigo
 
-    $default  reduce using rule 18 (tipo)
+    error      shift, and go to state 41
+    INTEIRO    shift, and go to state 16
+    REAL       shift, and go to state 17
+    CARACTERE  shift, and go to state 18
+
+    lista_vars  go to state 42
+    vars        go to state 43
+    tipo        go to state 24
 
 
 State 15
 
-   16 tipo: CARACTERE .
+   28 codigo: ESCREVA . LITERAL PONTO_E_VIRG codigo
+   29       | ESCREVA . ID_OU_FUNC PONTO_E_VIRG codigo
+   38       | ESCREVA . ID_OU_FUNC error codigo
+   39       | ESCREVA . LITERAL error codigo
 
-    $default  reduce using rule 16 (tipo)
+    ID_OU_FUNC  shift, and go to state 44
+    LITERAL     shift, and go to state 45
 
 
 State 16
 
-   38 se_entao: SE . ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE
+   25 tipo: INTEIRO .
 
-    ABRE_PAR  shift, and go to state 37
+    $default  reduce using rule 25 (tipo)
 
 
 State 17
 
-   25 codigo: ENQUANTO . ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo
+   26 tipo: REAL .
 
-    ABRE_PAR  shift, and go to state 38
+    $default  reduce using rule 26 (tipo)
 
 
 State 18
 
-   22 codigo: ID_OU_FUNC . ATRIBUICAO atribuido codigo
+   24 tipo: CARACTERE .
 
-    ATRIBUICAO  shift, and go to state 39
+    $default  reduce using rule 24 (tipo)
 
 
 State 19
 
-    2 assinatura: nome_funcao args .
+   56 se_entao: SE . ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE
+   57         | SE . error cond FECHA_PAR ENTAO codigo senao_op FIMSE
+   58         | SE . ABRE_PAR cond error ENTAO codigo senao_op FIMSE
+   59         | SE . ABRE_PAR cond FECHA_PAR error codigo senao_op FIMSE
 
-    $default  reduce using rule 2 (assinatura)
+    error     shift, and go to state 46
+    ABRE_PAR  shift, and go to state 47
 
 
 State 20
 
-   19 codigo: vars . codigo
+   33 codigo: ENQUANTO . ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo
 
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
-
-    $default  reduce using rule 29 (codigo)
-
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 40
-    se_entao  go to state 23
+    ABRE_PAR  shift, and go to state 48
 
 
 State 21
 
-   11 vars: tipo . ID_OU_FUNC PONTO_E_VIRG
-   12     | tipo . ID_OU_FUNC VIRGULA vars_cont
-   13     | tipo . ID_OU_FUNC ATRIBUICAO atribuido
+   30 codigo: ID_OU_FUNC . ATRIBUICAO atribuido codigo
 
-    ID_OU_FUNC  shift, and go to state 41
+    ATRIBUICAO  shift, and go to state 49
 
 
 State 22
 
-    8 args: codigo .
-
-    $default  reduce using rule 8 (args)
-
-
-State 23
-
-   24 codigo: se_entao . codigo
-
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
-
-    $default  reduce using rule 29 (codigo)
-
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 42
-    se_entao  go to state 23
-
-
-State 24
-
-   51 eof: FIM_DE_ARQ .
-
-    $default  reduce using rule 51 (eof)
-
-
-State 25
-
-   28 codigo: FIMFUNCAO programa .
-
-    $default  reduce using rule 28 (codigo)
-
-
-State 26
-
-   27 codigo: FIMFUNCAO eof .
-
-    $default  reduce using rule 27 (codigo)
-
-
-State 27
-
-   23 codigo: CHAMA CHAMADA . ID_OU_FUNC PONTO_E_VIRG codigo
-
-    ID_OU_FUNC  shift, and go to state 43
-
-
-State 28
-
-   26 codigo: RETORNA ID_OU_FUNC . PONTO_E_VIRG codigo
-
-    PONTO_E_VIRG  shift, and go to state 44
-
-
-State 29
-
-    5 tipo_funcao: INTEIRO .
-
-    $default  reduce using rule 5 (tipo_funcao)
-
-
-State 30
-
-    6 tipo_funcao: REAL .
-
-    $default  reduce using rule 6 (tipo_funcao)
-
-
-State 31
-
-    4 tipo_funcao: CARACTERE .
-
-    $default  reduce using rule 4 (tipo_funcao)
-
-
-State 32
-
-    3 assinatura: nome_funcao TIPO tipo_funcao . args
-
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ARGS        shift, and go to state 11
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
-
-    $default  reduce using rule 29 (codigo)
-
-    args      go to state 45
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 22
-    se_entao  go to state 23
-
-
-State 33
-
-    7 args: ARGS lista_vars . FIMARGS codigo
-   10 lista_vars: lista_vars . vars
-
-    FIMARGS    shift, and go to state 46
-    INTEIRO    shift, and go to state 13
-    REAL       shift, and go to state 14
-    CARACTERE  shift, and go to state 15
-
-    vars  go to state 47
-    tipo  go to state 21
-
-
-State 34
-
-    9 lista_vars: vars .
-
-    $default  reduce using rule 9 (lista_vars)
-
-
-State 35
-
-   21 codigo: ESCREVA ID_OU_FUNC . PONTO_E_VIRG codigo
-
-    PONTO_E_VIRG  shift, and go to state 48
-
-
-State 36
-
-   20 codigo: ESCREVA LITERAL . PONTO_E_VIRG codigo
-
-    PONTO_E_VIRG  shift, and go to state 49
-
-
-State 37
-
-   38 se_entao: SE ABRE_PAR . cond FECHA_PAR ENTAO codigo senao_op FIMSE
-
-    ID_OU_FUNC  shift, and go to state 50
-    NUMERO      shift, and go to state 51
-    LITERAL     shift, and go to state 52
-
-    cond  go to state 53
-
-
-State 38
-
-   25 codigo: ENQUANTO ABRE_PAR . cond FECHA_PAR FACA codigo FIMENQUANTO codigo
-
-    ID_OU_FUNC  shift, and go to state 50
-    NUMERO      shift, and go to state 51
-    LITERAL     shift, and go to state 52
-
-    cond  go to state 54
-
-
-State 39
-
-   22 codigo: ID_OU_FUNC ATRIBUICAO . atribuido codigo
-
-    CHAMA       shift, and go to state 55
-    ID_OU_FUNC  shift, and go to state 56
-    NUMERO      shift, and go to state 57
-    LITERAL     shift, and go to state 58
-
-    atribuido  go to state 59
-
-
-State 40
-
-   19 codigo: vars codigo .
-
-    $default  reduce using rule 19 (codigo)
-
-
-State 41
-
-   11 vars: tipo ID_OU_FUNC . PONTO_E_VIRG
-   12     | tipo ID_OU_FUNC . VIRGULA vars_cont
-   13     | tipo ID_OU_FUNC . ATRIBUICAO atribuido
-
-    ATRIBUICAO    shift, and go to state 60
-    VIRGULA       shift, and go to state 61
-    PONTO_E_VIRG  shift, and go to state 62
-
-
-State 42
-
-   24 codigo: se_entao codigo .
-
-    $default  reduce using rule 24 (codigo)
-
-
-State 43
-
-   23 codigo: CHAMA CHAMADA ID_OU_FUNC . PONTO_E_VIRG codigo
-
-    PONTO_E_VIRG  shift, and go to state 63
-
-
-State 44
-
-   26 codigo: RETORNA ID_OU_FUNC PONTO_E_VIRG . codigo
-
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
-
-    $default  reduce using rule 29 (codigo)
-
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 64
-    se_entao  go to state 23
-
-
-State 45
-
-    3 assinatura: nome_funcao TIPO tipo_funcao args .
+    3 assinatura: nome_funcao args .
 
     $default  reduce using rule 3 (assinatura)
 
 
+State 23
+
+   27 codigo: vars . codigo
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 51
+    se_entao  go to state 26
+
+
+State 24
+
+   14 vars: tipo . ID_OU_FUNC PONTO_E_VIRG
+   15     | tipo . ID_OU_FUNC VIRGULA vars_cont
+   16     | tipo . ID_OU_FUNC ATRIBUICAO atribuido
+   17     | tipo . error PONTO_E_VIRG
+   18     | tipo . ID_OU_FUNC error
+
+    error       shift, and go to state 52
+    ID_OU_FUNC  shift, and go to state 53
+
+
+State 25
+
+   10 args: codigo .
+
+    $default  reduce using rule 10 (args)
+
+
+State 26
+
+   32 codigo: se_entao . codigo
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 54
+    se_entao  go to state 26
+
+
+State 27
+
+    7 tipo_funcao: INTEIRO .
+
+    $default  reduce using rule 7 (tipo_funcao)
+
+
+State 28
+
+    8 tipo_funcao: REAL .
+
+    $default  reduce using rule 8 (tipo_funcao)
+
+
+State 29
+
+    6 tipo_funcao: CARACTERE .
+
+    $default  reduce using rule 6 (tipo_funcao)
+
+
+State 30
+
+   19 vars: error ID_OU_FUNC . PONTO_E_VIRG
+
+    PONTO_E_VIRG  shift, and go to state 55
+
+
+State 31
+
+   41 codigo: error PONTO_E_VIRG . codigo
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 56
+    se_entao  go to state 26
+
+
+State 32
+
+   81 eof: FIM_DE_ARQ .
+
+    $default  reduce using rule 81 (eof)
+
+
+State 33
+
+   43 codigo: error programa .
+
+    $default  reduce using rule 43 (codigo)
+
+
+State 34
+
+    5 assinatura: nome_funcao error tipo_funcao . args
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ARGS        shift, and go to state 14
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    args      go to state 57
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 25
+    se_entao  go to state 26
+
+
+State 35
+
+   42 codigo: error eof .
+
+    $default  reduce using rule 42 (codigo)
+
+
+State 36
+
+   36 codigo: FIMFUNCAO programa .
+
+    $default  reduce using rule 36 (codigo)
+
+
+State 37
+
+   35 codigo: FIMFUNCAO eof .
+
+    $default  reduce using rule 35 (codigo)
+
+
+State 38
+
+   31 codigo: CHAMA CHAMADA . ID_OU_FUNC PONTO_E_VIRG codigo
+
+    ID_OU_FUNC  shift, and go to state 58
+
+
+State 39
+
+   34 codigo: RETORNA ID_OU_FUNC . PONTO_E_VIRG codigo
+   40       | RETORNA ID_OU_FUNC . error
+
+    error         shift, and go to state 59
+    PONTO_E_VIRG  shift, and go to state 60
+
+
+State 40
+
+    4 assinatura: nome_funcao TIPO tipo_funcao . args
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ARGS        shift, and go to state 14
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    args      go to state 61
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 25
+    se_entao  go to state 26
+
+
+State 41
+
+   19 vars: error . ID_OU_FUNC PONTO_E_VIRG
+
+    ID_OU_FUNC  shift, and go to state 30
+
+
+State 42
+
+    9 args: ARGS lista_vars . FIMARGS codigo
+   11     | ARGS lista_vars . error codigo
+   13 lista_vars: lista_vars . vars
+
+    error      shift, and go to state 62
+    FIMARGS    shift, and go to state 63
+    INTEIRO    shift, and go to state 16
+    REAL       shift, and go to state 17
+    CARACTERE  shift, and go to state 18
+
+    vars  go to state 64
+    tipo  go to state 24
+
+
+State 43
+
+   12 lista_vars: vars .
+
+    $default  reduce using rule 12 (lista_vars)
+
+
+State 44
+
+   29 codigo: ESCREVA ID_OU_FUNC . PONTO_E_VIRG codigo
+   38       | ESCREVA ID_OU_FUNC . error codigo
+
+    error         shift, and go to state 65
+    PONTO_E_VIRG  shift, and go to state 66
+
+
+State 45
+
+   28 codigo: ESCREVA LITERAL . PONTO_E_VIRG codigo
+   39       | ESCREVA LITERAL . error codigo
+
+    error         shift, and go to state 67
+    PONTO_E_VIRG  shift, and go to state 68
+
+
 State 46
 
-    7 args: ARGS lista_vars FIMARGS . codigo
+   57 se_entao: SE error . cond FECHA_PAR ENTAO codigo senao_op FIMSE
 
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
+    error       shift, and go to state 69
+    ID_OU_FUNC  shift, and go to state 70
+    NUMERO      shift, and go to state 71
+    LITERAL     shift, and go to state 72
 
-    $default  reduce using rule 29 (codigo)
-
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 65
-    se_entao  go to state 23
+    cond  go to state 73
 
 
 State 47
 
-   10 lista_vars: lista_vars vars .
+   56 se_entao: SE ABRE_PAR . cond FECHA_PAR ENTAO codigo senao_op FIMSE
+   58         | SE ABRE_PAR . cond error ENTAO codigo senao_op FIMSE
+   59         | SE ABRE_PAR . cond FECHA_PAR error codigo senao_op FIMSE
 
-    $default  reduce using rule 10 (lista_vars)
+    error       shift, and go to state 69
+    ID_OU_FUNC  shift, and go to state 70
+    NUMERO      shift, and go to state 71
+    LITERAL     shift, and go to state 72
+
+    cond  go to state 74
 
 
 State 48
 
-   21 codigo: ESCREVA ID_OU_FUNC PONTO_E_VIRG . codigo
+   33 codigo: ENQUANTO ABRE_PAR . cond FECHA_PAR FACA codigo FIMENQUANTO codigo
 
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
+    error       shift, and go to state 69
+    ID_OU_FUNC  shift, and go to state 70
+    NUMERO      shift, and go to state 71
+    LITERAL     shift, and go to state 72
 
-    $default  reduce using rule 29 (codigo)
-
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 66
-    se_entao  go to state 23
+    cond  go to state 75
 
 
 State 49
 
-   20 codigo: ESCREVA LITERAL PONTO_E_VIRG . codigo
+   30 codigo: ID_OU_FUNC ATRIBUICAO . atribuido codigo
 
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
+    error       shift, and go to state 76
+    CHAMA       shift, and go to state 77
+    ID_OU_FUNC  shift, and go to state 78
+    NUMERO      shift, and go to state 79
+    LITERAL     shift, and go to state 80
 
-    $default  reduce using rule 29 (codigo)
-
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 67
-    se_entao  go to state 23
+    atribuido  go to state 81
 
 
 State 50
 
-   41 cond: ID_OU_FUNC . OP_RELACIONAL ID_OU_FUNC
-   42     | ID_OU_FUNC . OP_RELACIONAL NUMERO
-   43     | ID_OU_FUNC . OP_RELACIONAL LITERAL
+   19 vars: error . ID_OU_FUNC PONTO_E_VIRG
+   41 codigo: error . PONTO_E_VIRG codigo
+   42       | error . eof
+   43       | error . programa
 
-    OP_RELACIONAL  shift, and go to state 68
+    error         shift, and go to state 1
+    FUNCAO        shift, and go to state 2
+    ID_OU_FUNC    shift, and go to state 30
+    PONTO_E_VIRG  shift, and go to state 31
+    FIM_DE_ARQ    shift, and go to state 32
+
+    programa  go to state 33
+    eof       go to state 35
 
 
 State 51
 
-   44 cond: NUMERO . OP_RELACIONAL ID_OU_FUNC
-   45     | NUMERO . OP_RELACIONAL NUMERO
-   46     | NUMERO . OP_RELACIONAL LITERAL
+   27 codigo: vars codigo .
 
-    OP_RELACIONAL  shift, and go to state 69
+    $default  reduce using rule 27 (codigo)
 
 
 State 52
 
-   47 cond: LITERAL . OP_RELACIONAL ID_OU_FUNC
-   48     | LITERAL . OP_RELACIONAL NUMERO
-   49     | LITERAL . OP_RELACIONAL LITERAL
+   17 vars: tipo error . PONTO_E_VIRG
 
-    OP_RELACIONAL  shift, and go to state 70
+    PONTO_E_VIRG  shift, and go to state 82
 
 
 State 53
 
-   38 se_entao: SE ABRE_PAR cond . FECHA_PAR ENTAO codigo senao_op FIMSE
+   14 vars: tipo ID_OU_FUNC . PONTO_E_VIRG
+   15     | tipo ID_OU_FUNC . VIRGULA vars_cont
+   16     | tipo ID_OU_FUNC . ATRIBUICAO atribuido
+   18     | tipo ID_OU_FUNC . error
 
-    FECHA_PAR  shift, and go to state 71
+    error         shift, and go to state 83
+    ATRIBUICAO    shift, and go to state 84
+    VIRGULA       shift, and go to state 85
+    PONTO_E_VIRG  shift, and go to state 86
 
 
 State 54
 
-   25 codigo: ENQUANTO ABRE_PAR cond . FECHA_PAR FACA codigo FIMENQUANTO codigo
+   32 codigo: se_entao codigo .
 
-    FECHA_PAR  shift, and go to state 72
+    $default  reduce using rule 32 (codigo)
 
 
 State 55
 
-   35 atribuido: CHAMA . CHAMADA lista_id PONTO_E_VIRG
+   19 vars: error ID_OU_FUNC PONTO_E_VIRG .
 
-    CHAMADA  shift, and go to state 73
+    $default  reduce using rule 19 (vars)
 
 
 State 56
 
-   32 atribuido: ID_OU_FUNC . OP_ARITMETICO LITERAL PONTO_E_VIRG
-   33          | ID_OU_FUNC . OP_ARITMETICO NUMERO PONTO_E_VIRG
-   34          | ID_OU_FUNC . OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG
+   41 codigo: error PONTO_E_VIRG codigo .
 
-    OP_ARITMETICO  shift, and go to state 74
+    $default  reduce using rule 41 (codigo)
 
 
 State 57
 
-   31 atribuido: NUMERO . PONTO_E_VIRG
+    5 assinatura: nome_funcao error tipo_funcao args .
 
-    PONTO_E_VIRG  shift, and go to state 75
+    $default  reduce using rule 5 (assinatura)
 
 
 State 58
 
-   30 atribuido: LITERAL . PONTO_E_VIRG
+   31 codigo: CHAMA CHAMADA ID_OU_FUNC . PONTO_E_VIRG codigo
 
-    PONTO_E_VIRG  shift, and go to state 76
+    PONTO_E_VIRG  shift, and go to state 87
 
 
 State 59
 
-   22 codigo: ID_OU_FUNC ATRIBUICAO atribuido . codigo
+   40 codigo: RETORNA ID_OU_FUNC error .
 
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
-
-    $default  reduce using rule 29 (codigo)
-
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 77
-    se_entao  go to state 23
+    $default  reduce using rule 40 (codigo)
 
 
 State 60
 
-   13 vars: tipo ID_OU_FUNC ATRIBUICAO . atribuido
+   34 codigo: RETORNA ID_OU_FUNC PONTO_E_VIRG . codigo
 
-    CHAMA       shift, and go to state 55
-    ID_OU_FUNC  shift, and go to state 56
-    NUMERO      shift, and go to state 57
-    LITERAL     shift, and go to state 58
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
 
-    atribuido  go to state 78
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 88
+    se_entao  go to state 26
 
 
 State 61
 
-   12 vars: tipo ID_OU_FUNC VIRGULA . vars_cont
+    4 assinatura: nome_funcao TIPO tipo_funcao args .
 
-    ID_OU_FUNC  shift, and go to state 79
-
-    vars_cont  go to state 80
+    $default  reduce using rule 4 (assinatura)
 
 
 State 62
 
-   11 vars: tipo ID_OU_FUNC PONTO_E_VIRG .
+   11 args: ARGS lista_vars error . codigo
+   19 vars: error . ID_OU_FUNC PONTO_E_VIRG
 
-    $default  reduce using rule 11 (vars)
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 89
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 90
+    se_entao  go to state 26
 
 
 State 63
 
-   23 codigo: CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG . codigo
+    9 args: ARGS lista_vars FIMARGS . codigo
 
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
 
-    $default  reduce using rule 29 (codigo)
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
 
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 81
-    se_entao  go to state 23
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 91
+    se_entao  go to state 26
 
 
 State 64
 
-   26 codigo: RETORNA ID_OU_FUNC PONTO_E_VIRG codigo .
+   13 lista_vars: lista_vars vars .
 
-    $default  reduce using rule 26 (codigo)
+    $default  reduce using rule 13 (lista_vars)
 
 
 State 65
 
-    7 args: ARGS lista_vars FIMARGS codigo .
+   38 codigo: ESCREVA ID_OU_FUNC error . codigo
 
-    $default  reduce using rule 7 (args)
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 92
+    se_entao  go to state 26
 
 
 State 66
 
-   21 codigo: ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo .
+   29 codigo: ESCREVA ID_OU_FUNC PONTO_E_VIRG . codigo
 
-    $default  reduce using rule 21 (codigo)
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 93
+    se_entao  go to state 26
 
 
 State 67
 
-   20 codigo: ESCREVA LITERAL PONTO_E_VIRG codigo .
+   39 codigo: ESCREVA LITERAL error . codigo
 
-    $default  reduce using rule 20 (codigo)
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 94
+    se_entao  go to state 26
 
 
 State 68
 
-   41 cond: ID_OU_FUNC OP_RELACIONAL . ID_OU_FUNC
-   42     | ID_OU_FUNC OP_RELACIONAL . NUMERO
-   43     | ID_OU_FUNC OP_RELACIONAL . LITERAL
+   28 codigo: ESCREVA LITERAL PONTO_E_VIRG . codigo
 
-    ID_OU_FUNC  shift, and go to state 82
-    NUMERO      shift, and go to state 83
-    LITERAL     shift, and go to state 84
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 95
+    se_entao  go to state 26
 
 
 State 69
 
-   44 cond: NUMERO OP_RELACIONAL . ID_OU_FUNC
-   45     | NUMERO OP_RELACIONAL . NUMERO
-   46     | NUMERO OP_RELACIONAL . LITERAL
+   71 cond: error . OP_RELACIONAL ID_OU_FUNC
+   74     | error . OP_RELACIONAL NUMERO
+   77     | error . OP_RELACIONAL LITERAL
 
-    ID_OU_FUNC  shift, and go to state 85
-    NUMERO      shift, and go to state 86
-    LITERAL     shift, and go to state 87
+    OP_RELACIONAL  shift, and go to state 96
 
 
 State 70
 
-   47 cond: LITERAL OP_RELACIONAL . ID_OU_FUNC
-   48     | LITERAL OP_RELACIONAL . NUMERO
-   49     | LITERAL OP_RELACIONAL . LITERAL
+   62 cond: ID_OU_FUNC . OP_RELACIONAL ID_OU_FUNC
+   63     | ID_OU_FUNC . OP_RELACIONAL NUMERO
+   64     | ID_OU_FUNC . OP_RELACIONAL LITERAL
+   72     | ID_OU_FUNC . error ID_OU_FUNC
+   73     | ID_OU_FUNC . OP_RELACIONAL error
 
-    ID_OU_FUNC  shift, and go to state 88
-    NUMERO      shift, and go to state 89
-    LITERAL     shift, and go to state 90
+    error          shift, and go to state 97
+    OP_RELACIONAL  shift, and go to state 98
 
 
 State 71
 
-   38 se_entao: SE ABRE_PAR cond FECHA_PAR . ENTAO codigo senao_op FIMSE
+   65 cond: NUMERO . OP_RELACIONAL ID_OU_FUNC
+   66     | NUMERO . OP_RELACIONAL NUMERO
+   67     | NUMERO . OP_RELACIONAL LITERAL
+   75     | NUMERO . error NUMERO
+   76     | NUMERO . OP_RELACIONAL error
 
-    ENTAO  shift, and go to state 91
+    error          shift, and go to state 99
+    OP_RELACIONAL  shift, and go to state 100
 
 
 State 72
 
-   25 codigo: ENQUANTO ABRE_PAR cond FECHA_PAR . FACA codigo FIMENQUANTO codigo
+   68 cond: LITERAL . OP_RELACIONAL ID_OU_FUNC
+   69     | LITERAL . OP_RELACIONAL NUMERO
+   70     | LITERAL . OP_RELACIONAL LITERAL
+   78     | LITERAL . error LITERAL
+   79     | LITERAL . OP_RELACIONAL error
 
-    FACA  shift, and go to state 92
+    error          shift, and go to state 101
+    OP_RELACIONAL  shift, and go to state 102
 
 
 State 73
 
-   35 atribuido: CHAMA CHAMADA . lista_id PONTO_E_VIRG
+   57 se_entao: SE error cond . FECHA_PAR ENTAO codigo senao_op FIMSE
 
-    ID_OU_FUNC  shift, and go to state 93
-
-    $default  reduce using rule 37 (lista_id)
-
-    lista_id  go to state 94
+    FECHA_PAR  shift, and go to state 103
 
 
 State 74
 
-   32 atribuido: ID_OU_FUNC OP_ARITMETICO . LITERAL PONTO_E_VIRG
-   33          | ID_OU_FUNC OP_ARITMETICO . NUMERO PONTO_E_VIRG
-   34          | ID_OU_FUNC OP_ARITMETICO . ID_OU_FUNC PONTO_E_VIRG
+   56 se_entao: SE ABRE_PAR cond . FECHA_PAR ENTAO codigo senao_op FIMSE
+   58         | SE ABRE_PAR cond . error ENTAO codigo senao_op FIMSE
+   59         | SE ABRE_PAR cond . FECHA_PAR error codigo senao_op FIMSE
 
-    ID_OU_FUNC  shift, and go to state 95
-    NUMERO      shift, and go to state 96
-    LITERAL     shift, and go to state 97
+    error      shift, and go to state 104
+    FECHA_PAR  shift, and go to state 105
 
 
 State 75
 
-   31 atribuido: NUMERO PONTO_E_VIRG .
+   33 codigo: ENQUANTO ABRE_PAR cond . FECHA_PAR FACA codigo FIMENQUANTO codigo
 
-    $default  reduce using rule 31 (atribuido)
+    FECHA_PAR  shift, and go to state 106
 
 
 State 76
 
-   30 atribuido: LITERAL PONTO_E_VIRG .
+   50 atribuido: error . PONTO_E_VIRG
 
-    $default  reduce using rule 30 (atribuido)
+    PONTO_E_VIRG  shift, and go to state 107
 
 
 State 77
 
-   22 codigo: ID_OU_FUNC ATRIBUICAO atribuido codigo .
+   49 atribuido: CHAMA . CHAMADA lista_id PONTO_E_VIRG
 
-    $default  reduce using rule 22 (codigo)
+    CHAMADA  shift, and go to state 108
 
 
 State 78
 
-   13 vars: tipo ID_OU_FUNC ATRIBUICAO atribuido .
+   46 atribuido: ID_OU_FUNC . OP_ARITMETICO LITERAL PONTO_E_VIRG
+   47          | ID_OU_FUNC . OP_ARITMETICO NUMERO PONTO_E_VIRG
+   48          | ID_OU_FUNC . OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG
+   51          | ID_OU_FUNC . error
+   52          | ID_OU_FUNC . OP_ARITMETICO error
 
-    $default  reduce using rule 13 (vars)
+    error          shift, and go to state 109
+    OP_ARITMETICO  shift, and go to state 110
 
 
 State 79
 
-   14 vars_cont: ID_OU_FUNC . VIRGULA vars_cont
-   15          | ID_OU_FUNC . PONTO_E_VIRG
+   45 atribuido: NUMERO . PONTO_E_VIRG
 
-    VIRGULA       shift, and go to state 98
-    PONTO_E_VIRG  shift, and go to state 99
+    PONTO_E_VIRG  shift, and go to state 111
 
 
 State 80
 
-   12 vars: tipo ID_OU_FUNC VIRGULA vars_cont .
+   44 atribuido: LITERAL . PONTO_E_VIRG
 
-    $default  reduce using rule 12 (vars)
+    PONTO_E_VIRG  shift, and go to state 112
 
 
 State 81
 
-   23 codigo: CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo .
+   30 codigo: ID_OU_FUNC ATRIBUICAO atribuido . codigo
 
-    $default  reduce using rule 23 (codigo)
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 113
+    se_entao  go to state 26
 
 
 State 82
 
-   41 cond: ID_OU_FUNC OP_RELACIONAL ID_OU_FUNC .
+   17 vars: tipo error PONTO_E_VIRG .
 
-    $default  reduce using rule 41 (cond)
+    $default  reduce using rule 17 (vars)
 
 
 State 83
 
-   42 cond: ID_OU_FUNC OP_RELACIONAL NUMERO .
+   18 vars: tipo ID_OU_FUNC error .
 
-    $default  reduce using rule 42 (cond)
+    $default  reduce using rule 18 (vars)
 
 
 State 84
 
-   43 cond: ID_OU_FUNC OP_RELACIONAL LITERAL .
+   16 vars: tipo ID_OU_FUNC ATRIBUICAO . atribuido
 
-    $default  reduce using rule 43 (cond)
+    error       shift, and go to state 76
+    CHAMA       shift, and go to state 77
+    ID_OU_FUNC  shift, and go to state 78
+    NUMERO      shift, and go to state 79
+    LITERAL     shift, and go to state 80
+
+    atribuido  go to state 114
 
 
 State 85
 
-   44 cond: NUMERO OP_RELACIONAL ID_OU_FUNC .
+   15 vars: tipo ID_OU_FUNC VIRGULA . vars_cont
 
-    $default  reduce using rule 44 (cond)
+    error       shift, and go to state 115
+    ID_OU_FUNC  shift, and go to state 116
+
+    vars_cont  go to state 117
 
 
 State 86
 
-   45 cond: NUMERO OP_RELACIONAL NUMERO .
+   14 vars: tipo ID_OU_FUNC PONTO_E_VIRG .
 
-    $default  reduce using rule 45 (cond)
+    $default  reduce using rule 14 (vars)
 
 
 State 87
 
-   46 cond: NUMERO OP_RELACIONAL LITERAL .
+   31 codigo: CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG . codigo
 
-    $default  reduce using rule 46 (cond)
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 118
+    se_entao  go to state 26
 
 
 State 88
 
-   47 cond: LITERAL OP_RELACIONAL ID_OU_FUNC .
+   34 codigo: RETORNA ID_OU_FUNC PONTO_E_VIRG codigo .
 
-    $default  reduce using rule 47 (cond)
+    $default  reduce using rule 34 (codigo)
 
 
 State 89
 
-   48 cond: LITERAL OP_RELACIONAL NUMERO .
+   19 vars: error ID_OU_FUNC . PONTO_E_VIRG
+   30 codigo: ID_OU_FUNC . ATRIBUICAO atribuido codigo
 
-    $default  reduce using rule 48 (cond)
+    ATRIBUICAO    shift, and go to state 49
+    PONTO_E_VIRG  shift, and go to state 55
 
 
 State 90
 
-   49 cond: LITERAL OP_RELACIONAL LITERAL .
+   11 args: ARGS lista_vars error codigo .
 
-    $default  reduce using rule 49 (cond)
+    $default  reduce using rule 11 (args)
 
 
 State 91
 
-   38 se_entao: SE ABRE_PAR cond FECHA_PAR ENTAO . codigo senao_op FIMSE
+    9 args: ARGS lista_vars FIMARGS codigo .
 
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
-
-    $default  reduce using rule 29 (codigo)
-
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 100
-    se_entao  go to state 23
+    $default  reduce using rule 9 (args)
 
 
 State 92
 
-   25 codigo: ENQUANTO ABRE_PAR cond FECHA_PAR FACA . codigo FIMENQUANTO codigo
+   38 codigo: ESCREVA ID_OU_FUNC error codigo .
 
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
-
-    $default  reduce using rule 29 (codigo)
-
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 101
-    se_entao  go to state 23
+    $default  reduce using rule 38 (codigo)
 
 
 State 93
 
-   36 lista_id: ID_OU_FUNC . lista_id
+   29 codigo: ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo .
 
-    ID_OU_FUNC  shift, and go to state 93
-
-    $default  reduce using rule 37 (lista_id)
-
-    lista_id  go to state 102
+    $default  reduce using rule 29 (codigo)
 
 
 State 94
 
-   35 atribuido: CHAMA CHAMADA lista_id . PONTO_E_VIRG
+   39 codigo: ESCREVA LITERAL error codigo .
 
-    PONTO_E_VIRG  shift, and go to state 103
+    $default  reduce using rule 39 (codigo)
 
 
 State 95
 
-   34 atribuido: ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC . PONTO_E_VIRG
+   28 codigo: ESCREVA LITERAL PONTO_E_VIRG codigo .
 
-    PONTO_E_VIRG  shift, and go to state 104
+    $default  reduce using rule 28 (codigo)
 
 
 State 96
 
-   33 atribuido: ID_OU_FUNC OP_ARITMETICO NUMERO . PONTO_E_VIRG
+   71 cond: error OP_RELACIONAL . ID_OU_FUNC
+   74     | error OP_RELACIONAL . NUMERO
+   77     | error OP_RELACIONAL . LITERAL
 
-    PONTO_E_VIRG  shift, and go to state 105
+    ID_OU_FUNC  shift, and go to state 119
+    NUMERO      shift, and go to state 120
+    LITERAL     shift, and go to state 121
 
 
 State 97
 
-   32 atribuido: ID_OU_FUNC OP_ARITMETICO LITERAL . PONTO_E_VIRG
+   72 cond: ID_OU_FUNC error . ID_OU_FUNC
 
-    PONTO_E_VIRG  shift, and go to state 106
+    ID_OU_FUNC  shift, and go to state 122
 
 
 State 98
 
-   14 vars_cont: ID_OU_FUNC VIRGULA . vars_cont
+   62 cond: ID_OU_FUNC OP_RELACIONAL . ID_OU_FUNC
+   63     | ID_OU_FUNC OP_RELACIONAL . NUMERO
+   64     | ID_OU_FUNC OP_RELACIONAL . LITERAL
+   73     | ID_OU_FUNC OP_RELACIONAL . error
 
-    ID_OU_FUNC  shift, and go to state 79
-
-    vars_cont  go to state 107
+    error       shift, and go to state 123
+    ID_OU_FUNC  shift, and go to state 124
+    NUMERO      shift, and go to state 125
+    LITERAL     shift, and go to state 126
 
 
 State 99
 
-   15 vars_cont: ID_OU_FUNC PONTO_E_VIRG .
+   75 cond: NUMERO error . NUMERO
 
-    $default  reduce using rule 15 (vars_cont)
+    NUMERO  shift, and go to state 127
 
 
 State 100
 
-   38 se_entao: SE ABRE_PAR cond FECHA_PAR ENTAO codigo . senao_op FIMSE
+   65 cond: NUMERO OP_RELACIONAL . ID_OU_FUNC
+   66     | NUMERO OP_RELACIONAL . NUMERO
+   67     | NUMERO OP_RELACIONAL . LITERAL
+   76     | NUMERO OP_RELACIONAL . error
 
-    SENAO  shift, and go to state 108
-
-    $default  reduce using rule 40 (senao_op)
-
-    senao_op  go to state 109
+    error       shift, and go to state 128
+    ID_OU_FUNC  shift, and go to state 129
+    NUMERO      shift, and go to state 130
+    LITERAL     shift, and go to state 131
 
 
 State 101
 
-   25 codigo: ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo . FIMENQUANTO codigo
+   78 cond: LITERAL error . LITERAL
 
-    FIMENQUANTO  shift, and go to state 110
+    LITERAL  shift, and go to state 132
 
 
 State 102
 
-   36 lista_id: ID_OU_FUNC lista_id .
+   68 cond: LITERAL OP_RELACIONAL . ID_OU_FUNC
+   69     | LITERAL OP_RELACIONAL . NUMERO
+   70     | LITERAL OP_RELACIONAL . LITERAL
+   79     | LITERAL OP_RELACIONAL . error
 
-    $default  reduce using rule 36 (lista_id)
+    error       shift, and go to state 133
+    ID_OU_FUNC  shift, and go to state 134
+    NUMERO      shift, and go to state 135
+    LITERAL     shift, and go to state 136
 
 
 State 103
 
-   35 atribuido: CHAMA CHAMADA lista_id PONTO_E_VIRG .
+   57 se_entao: SE error cond FECHA_PAR . ENTAO codigo senao_op FIMSE
 
-    $default  reduce using rule 35 (atribuido)
+    ENTAO  shift, and go to state 137
 
 
 State 104
 
-   34 atribuido: ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG .
+   58 se_entao: SE ABRE_PAR cond error . ENTAO codigo senao_op FIMSE
 
-    $default  reduce using rule 34 (atribuido)
+    ENTAO  shift, and go to state 138
 
 
 State 105
 
-   33 atribuido: ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG .
+   56 se_entao: SE ABRE_PAR cond FECHA_PAR . ENTAO codigo senao_op FIMSE
+   59         | SE ABRE_PAR cond FECHA_PAR . error codigo senao_op FIMSE
 
-    $default  reduce using rule 33 (atribuido)
+    error  shift, and go to state 139
+    ENTAO  shift, and go to state 140
 
 
 State 106
 
-   32 atribuido: ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG .
+   33 codigo: ENQUANTO ABRE_PAR cond FECHA_PAR . FACA codigo FIMENQUANTO codigo
 
-    $default  reduce using rule 32 (atribuido)
+    FACA  shift, and go to state 141
 
 
 State 107
 
-   14 vars_cont: ID_OU_FUNC VIRGULA vars_cont .
+   50 atribuido: error PONTO_E_VIRG .
 
-    $default  reduce using rule 14 (vars_cont)
+    $default  reduce using rule 50 (atribuido)
 
 
 State 108
 
-   39 senao_op: SENAO . codigo
+   49 atribuido: CHAMA CHAMADA . lista_id PONTO_E_VIRG
 
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
+    error       shift, and go to state 142
+    ID_OU_FUNC  shift, and go to state 143
 
-    $default  reduce using rule 29 (codigo)
+    PONTO_E_VIRG  reduce using rule 54 (lista_id)
 
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 111
-    se_entao  go to state 23
+    lista_id  go to state 144
 
 
 State 109
 
-   38 se_entao: SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op . FIMSE
+   51 atribuido: ID_OU_FUNC error .
 
-    FIMSE  shift, and go to state 112
+    $default  reduce using rule 51 (atribuido)
 
 
 State 110
 
-   25 codigo: ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO . codigo
+   46 atribuido: ID_OU_FUNC OP_ARITMETICO . LITERAL PONTO_E_VIRG
+   47          | ID_OU_FUNC OP_ARITMETICO . NUMERO PONTO_E_VIRG
+   48          | ID_OU_FUNC OP_ARITMETICO . ID_OU_FUNC PONTO_E_VIRG
+   52          | ID_OU_FUNC OP_ARITMETICO . error
 
-    FIMFUNCAO   shift, and go to state 7
-    CHAMA       shift, and go to state 8
-    RETORNA     shift, and go to state 9
-    ESCREVA     shift, and go to state 12
-    INTEIRO     shift, and go to state 13
-    REAL        shift, and go to state 14
-    CARACTERE   shift, and go to state 15
-    SE          shift, and go to state 16
-    ENQUANTO    shift, and go to state 17
-    ID_OU_FUNC  shift, and go to state 18
-
-    $default  reduce using rule 29 (codigo)
-
-    vars      go to state 20
-    tipo      go to state 21
-    codigo    go to state 113
-    se_entao  go to state 23
+    error       shift, and go to state 145
+    ID_OU_FUNC  shift, and go to state 146
+    NUMERO      shift, and go to state 147
+    LITERAL     shift, and go to state 148
 
 
 State 111
 
-   39 senao_op: SENAO codigo .
+   45 atribuido: NUMERO PONTO_E_VIRG .
 
-    $default  reduce using rule 39 (senao_op)
+    $default  reduce using rule 45 (atribuido)
 
 
 State 112
 
-   38 se_entao: SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE .
+   44 atribuido: LITERAL PONTO_E_VIRG .
 
-    $default  reduce using rule 38 (se_entao)
+    $default  reduce using rule 44 (atribuido)
 
 
 State 113
 
-   25 codigo: ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo .
+   30 codigo: ID_OU_FUNC ATRIBUICAO atribuido codigo .
 
-    $default  reduce using rule 25 (codigo)
+    $default  reduce using rule 30 (codigo)
+
+
+State 114
+
+   16 vars: tipo ID_OU_FUNC ATRIBUICAO atribuido .
+
+    $default  reduce using rule 16 (vars)
+
+
+State 115
+
+   22 vars_cont: error . VIRGULA vars_cont
+
+    VIRGULA  shift, and go to state 149
+
+
+State 116
+
+   20 vars_cont: ID_OU_FUNC . VIRGULA vars_cont
+   21          | ID_OU_FUNC . PONTO_E_VIRG
+   23          | ID_OU_FUNC . error
+
+    error         shift, and go to state 150
+    VIRGULA       shift, and go to state 151
+    PONTO_E_VIRG  shift, and go to state 152
+
+
+State 117
+
+   15 vars: tipo ID_OU_FUNC VIRGULA vars_cont .
+
+    $default  reduce using rule 15 (vars)
+
+
+State 118
+
+   31 codigo: CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo .
+
+    $default  reduce using rule 31 (codigo)
+
+
+State 119
+
+   71 cond: error OP_RELACIONAL ID_OU_FUNC .
+
+    $default  reduce using rule 71 (cond)
+
+
+State 120
+
+   74 cond: error OP_RELACIONAL NUMERO .
+
+    $default  reduce using rule 74 (cond)
+
+
+State 121
+
+   77 cond: error OP_RELACIONAL LITERAL .
+
+    $default  reduce using rule 77 (cond)
+
+
+State 122
+
+   72 cond: ID_OU_FUNC error ID_OU_FUNC .
+
+    $default  reduce using rule 72 (cond)
+
+
+State 123
+
+   73 cond: ID_OU_FUNC OP_RELACIONAL error .
+
+    $default  reduce using rule 73 (cond)
+
+
+State 124
+
+   62 cond: ID_OU_FUNC OP_RELACIONAL ID_OU_FUNC .
+
+    $default  reduce using rule 62 (cond)
+
+
+State 125
+
+   63 cond: ID_OU_FUNC OP_RELACIONAL NUMERO .
+
+    $default  reduce using rule 63 (cond)
+
+
+State 126
+
+   64 cond: ID_OU_FUNC OP_RELACIONAL LITERAL .
+
+    $default  reduce using rule 64 (cond)
+
+
+State 127
+
+   75 cond: NUMERO error NUMERO .
+
+    $default  reduce using rule 75 (cond)
+
+
+State 128
+
+   76 cond: NUMERO OP_RELACIONAL error .
+
+    $default  reduce using rule 76 (cond)
+
+
+State 129
+
+   65 cond: NUMERO OP_RELACIONAL ID_OU_FUNC .
+
+    $default  reduce using rule 65 (cond)
+
+
+State 130
+
+   66 cond: NUMERO OP_RELACIONAL NUMERO .
+
+    $default  reduce using rule 66 (cond)
+
+
+State 131
+
+   67 cond: NUMERO OP_RELACIONAL LITERAL .
+
+    $default  reduce using rule 67 (cond)
+
+
+State 132
+
+   78 cond: LITERAL error LITERAL .
+
+    $default  reduce using rule 78 (cond)
+
+
+State 133
+
+   79 cond: LITERAL OP_RELACIONAL error .
+
+    $default  reduce using rule 79 (cond)
+
+
+State 134
+
+   68 cond: LITERAL OP_RELACIONAL ID_OU_FUNC .
+
+    $default  reduce using rule 68 (cond)
+
+
+State 135
+
+   69 cond: LITERAL OP_RELACIONAL NUMERO .
+
+    $default  reduce using rule 69 (cond)
+
+
+State 136
+
+   70 cond: LITERAL OP_RELACIONAL LITERAL .
+
+    $default  reduce using rule 70 (cond)
+
+
+State 137
+
+   57 se_entao: SE error cond FECHA_PAR ENTAO . codigo senao_op FIMSE
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    FIMSE  reduce using rule 37 (codigo)
+    SENAO  reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 153
+    se_entao  go to state 26
+
+
+State 138
+
+   58 se_entao: SE ABRE_PAR cond error ENTAO . codigo senao_op FIMSE
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    FIMSE  reduce using rule 37 (codigo)
+    SENAO  reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 154
+    se_entao  go to state 26
+
+
+State 139
+
+   59 se_entao: SE ABRE_PAR cond FECHA_PAR error . codigo senao_op FIMSE
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    FIMSE  reduce using rule 37 (codigo)
+    SENAO  reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 155
+    se_entao  go to state 26
+
+
+State 140
+
+   56 se_entao: SE ABRE_PAR cond FECHA_PAR ENTAO . codigo senao_op FIMSE
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    FIMSE  reduce using rule 37 (codigo)
+    SENAO  reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 156
+    se_entao  go to state 26
+
+
+State 141
+
+   33 codigo: ENQUANTO ABRE_PAR cond FECHA_PAR FACA . codigo FIMENQUANTO codigo
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    FIMENQUANTO  reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 157
+    se_entao  go to state 26
+
+
+State 142
+
+   55 lista_id: error . lista_id
+
+    error       shift, and go to state 142
+    ID_OU_FUNC  shift, and go to state 143
+
+    PONTO_E_VIRG  reduce using rule 54 (lista_id)
+
+    lista_id  go to state 158
+
+
+State 143
+
+   53 lista_id: ID_OU_FUNC . lista_id
+
+    error       shift, and go to state 142
+    ID_OU_FUNC  shift, and go to state 143
+
+    PONTO_E_VIRG  reduce using rule 54 (lista_id)
+
+    lista_id  go to state 159
+
+
+State 144
+
+   49 atribuido: CHAMA CHAMADA lista_id . PONTO_E_VIRG
+
+    PONTO_E_VIRG  shift, and go to state 160
+
+
+State 145
+
+   52 atribuido: ID_OU_FUNC OP_ARITMETICO error .
+
+    $default  reduce using rule 52 (atribuido)
+
+
+State 146
+
+   48 atribuido: ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC . PONTO_E_VIRG
+
+    PONTO_E_VIRG  shift, and go to state 161
+
+
+State 147
+
+   47 atribuido: ID_OU_FUNC OP_ARITMETICO NUMERO . PONTO_E_VIRG
+
+    PONTO_E_VIRG  shift, and go to state 162
+
+
+State 148
+
+   46 atribuido: ID_OU_FUNC OP_ARITMETICO LITERAL . PONTO_E_VIRG
+
+    PONTO_E_VIRG  shift, and go to state 163
+
+
+State 149
+
+   22 vars_cont: error VIRGULA . vars_cont
+
+    error       shift, and go to state 115
+    ID_OU_FUNC  shift, and go to state 116
+
+    vars_cont  go to state 164
+
+
+State 150
+
+   23 vars_cont: ID_OU_FUNC error .
+
+    $default  reduce using rule 23 (vars_cont)
+
+
+State 151
+
+   20 vars_cont: ID_OU_FUNC VIRGULA . vars_cont
+
+    error       shift, and go to state 115
+    ID_OU_FUNC  shift, and go to state 116
+
+    vars_cont  go to state 165
+
+
+State 152
+
+   21 vars_cont: ID_OU_FUNC PONTO_E_VIRG .
+
+    $default  reduce using rule 21 (vars_cont)
+
+
+State 153
+
+   57 se_entao: SE error cond FECHA_PAR ENTAO codigo . senao_op FIMSE
+
+    SENAO  shift, and go to state 166
+
+    $default  reduce using rule 61 (senao_op)
+
+    senao_op  go to state 167
+
+
+State 154
+
+   58 se_entao: SE ABRE_PAR cond error ENTAO codigo . senao_op FIMSE
+
+    SENAO  shift, and go to state 166
+
+    $default  reduce using rule 61 (senao_op)
+
+    senao_op  go to state 168
+
+
+State 155
+
+   59 se_entao: SE ABRE_PAR cond FECHA_PAR error codigo . senao_op FIMSE
+
+    SENAO  shift, and go to state 166
+
+    $default  reduce using rule 61 (senao_op)
+
+    senao_op  go to state 169
+
+
+State 156
+
+   56 se_entao: SE ABRE_PAR cond FECHA_PAR ENTAO codigo . senao_op FIMSE
+
+    SENAO  shift, and go to state 166
+
+    $default  reduce using rule 61 (senao_op)
+
+    senao_op  go to state 170
+
+
+State 157
+
+   33 codigo: ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo . FIMENQUANTO codigo
+
+    FIMENQUANTO  shift, and go to state 171
+
+
+State 158
+
+   55 lista_id: error lista_id .
+
+    $default  reduce using rule 55 (lista_id)
+
+
+State 159
+
+   53 lista_id: ID_OU_FUNC lista_id .
+
+    $default  reduce using rule 53 (lista_id)
+
+
+State 160
+
+   49 atribuido: CHAMA CHAMADA lista_id PONTO_E_VIRG .
+
+    $default  reduce using rule 49 (atribuido)
+
+
+State 161
+
+   48 atribuido: ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG .
+
+    $default  reduce using rule 48 (atribuido)
+
+
+State 162
+
+   47 atribuido: ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG .
+
+    $default  reduce using rule 47 (atribuido)
+
+
+State 163
+
+   46 atribuido: ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG .
+
+    $default  reduce using rule 46 (atribuido)
+
+
+State 164
+
+   22 vars_cont: error VIRGULA vars_cont .
+
+    $default  reduce using rule 22 (vars_cont)
+
+
+State 165
+
+   20 vars_cont: ID_OU_FUNC VIRGULA vars_cont .
+
+    $default  reduce using rule 20 (vars_cont)
+
+
+State 166
+
+   60 senao_op: SENAO . codigo
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    FIMSE  reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 172
+    se_entao  go to state 26
+
+
+State 167
+
+   57 se_entao: SE error cond FECHA_PAR ENTAO codigo senao_op . FIMSE
+
+    FIMSE  shift, and go to state 173
+
+
+State 168
+
+   58 se_entao: SE ABRE_PAR cond error ENTAO codigo senao_op . FIMSE
+
+    FIMSE  shift, and go to state 174
+
+
+State 169
+
+   59 se_entao: SE ABRE_PAR cond FECHA_PAR error codigo senao_op . FIMSE
+
+    FIMSE  shift, and go to state 175
+
+
+State 170
+
+   56 se_entao: SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op . FIMSE
+
+    FIMSE  shift, and go to state 176
+
+
+State 171
+
+   33 codigo: ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO . codigo
+
+    error       shift, and go to state 50
+    FIMFUNCAO   shift, and go to state 10
+    CHAMA       shift, and go to state 11
+    RETORNA     shift, and go to state 12
+    ESCREVA     shift, and go to state 15
+    INTEIRO     shift, and go to state 16
+    REAL        shift, and go to state 17
+    CARACTERE   shift, and go to state 18
+    SE          shift, and go to state 19
+    ENQUANTO    shift, and go to state 20
+    ID_OU_FUNC  shift, and go to state 21
+
+    $end         reduce using rule 37 (codigo)
+    FIMSE        reduce using rule 37 (codigo)
+    FIMENQUANTO  reduce using rule 37 (codigo)
+    SENAO        reduce using rule 37 (codigo)
+
+    vars      go to state 23
+    tipo      go to state 24
+    codigo    go to state 177
+    se_entao  go to state 26
+
+
+State 172
+
+   60 senao_op: SENAO codigo .
+
+    $default  reduce using rule 60 (senao_op)
+
+
+State 173
+
+   57 se_entao: SE error cond FECHA_PAR ENTAO codigo senao_op FIMSE .
+
+    $default  reduce using rule 57 (se_entao)
+
+
+State 174
+
+   58 se_entao: SE ABRE_PAR cond error ENTAO codigo senao_op FIMSE .
+
+    $default  reduce using rule 58 (se_entao)
+
+
+State 175
+
+   59 se_entao: SE ABRE_PAR cond FECHA_PAR error codigo senao_op FIMSE .
+
+    $default  reduce using rule 59 (se_entao)
+
+
+State 176
+
+   56 se_entao: SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE .
+
+    $default  reduce using rule 56 (se_entao)
+
+
+State 177
+
+   33 codigo: ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo .
+
+    $default  reduce using rule 33 (codigo)

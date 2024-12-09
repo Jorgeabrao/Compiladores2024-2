@@ -12,7 +12,7 @@ void production_print(const char* production);
 void yyerror(const char *s);
 extern struct hashMap *sym_table;
 
-int verb = 1; //1 to activate verbose mode
+int verb = 0; //1 to activate verbose mode
 char* aux;
 int i = 0;
 int error = 0;
