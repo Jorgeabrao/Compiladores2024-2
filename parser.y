@@ -18,12 +18,15 @@ int i = 0;
 int error = 0;
 extern int line_num;
 extern int col_num;
+extern int eof;
+extern int func;
 
 %}
 
 %union {
     char *str;
     int num;
+    float fnum;
 }
 
 %token <str>  FUNCAO FIMFUNCAO CHAMA RETORNA TIPO
@@ -34,17 +37,30 @@ extern int col_num;
 %token <str>  OP_ARITMETICO ATRIBUICAO ABRE_PAR FECHA_PAR
 %token <str>  VIRGULA PONTO_E_VIRG COMENTARIO FIM_DE_ARQ
 
+%type <str> assinatura error
+
+%right ATRIBUICAO
+%left OP_RELACIONAL
+%left '+' '-'
+%left '*' '/'
+
 %verbose
 %start programa
 
 %%
 programa:
-    FUNCAO assinatura {production_print("programa -> FUNCAO assinatura");}
+    FUNCAO assinatura { func--; production_print("programa -> FUNCAO assinatura");if(eof == 1 && func == 0) return 0;}
+    | error assinatura{
+        yyerrok;
+        yyclearin;if(eof == 1) return 0;}
     ;
 
 assinatura:
     nome_funcao args {production_print("assinatura -> nome_funcao args");}
     | nome_funcao TIPO tipo_funcao args {production_print("assinatura -> nome_funcao TIPO tipo_funcao args");}
+    | nome_funcao error tipo_funcao args {
+        yyerrok;
+        yyclearin;}
     ;
 
 tipo_funcao:
@@ -56,6 +72,9 @@ tipo_funcao:
 args:
     ARGS lista_vars FIMARGS codigo {production_print("args -> ARGS lista_vars FIMARGS codigo");}
     | codigo {production_print("args -> codigo");}
+    | ARGS lista_vars error codigo {
+        yyerrok;
+        yyclearin;}
     ;
 
 lista_vars:
@@ -67,11 +86,26 @@ vars:
     tipo ID_OU_FUNC PONTO_E_VIRG {production_print("vars -> tipo ID_OU_FUNC PONTO_E_VIRG");}
     | tipo ID_OU_FUNC VIRGULA vars_cont {production_print("vars -> tipo ID_OU_FUNC VIRGULA vars_cont");}
     | tipo ID_OU_FUNC ATRIBUICAO atribuido {production_print("vars -> tipo ID_OU_FUNC ATRIBUICAO atribuido");}
+    | tipo error PONTO_E_VIRG {
+        yyerrok;
+        yyclearin;}
+    | tipo ID_OU_FUNC error{
+        yyerrok;
+        yyclearin;}
+    | error ID_OU_FUNC PONTO_E_VIRG{
+         yyerrok;
+        yyclearin;}
     ;
 
 vars_cont:
     ID_OU_FUNC VIRGULA vars_cont {production_print("vars_cont -> ID_OU_FUNC VIRGULA vars_cont");}
     | ID_OU_FUNC PONTO_E_VIRG {production_print("vars_cont -> ID_OU_FUNC PONTO_E_VIRG");}
+    | error VIRGULA vars_cont{
+        yyerrok;
+        yyclearin;}
+    | ID_OU_FUNC error{
+        yyerrok;
+        yyclearin;}
     ;
 
 tipo:
@@ -92,6 +126,24 @@ codigo:
     | FIMFUNCAO eof {production_print("codigo -> FIMFUNCAO");}
     | FIMFUNCAO programa {production_print("codigo -> FIMFUNCAO");}
     | {production_print("codigo -> epsilon");}
+    | ESCREVA ID_OU_FUNC error codigo{
+        yyerrok;
+        yyclearin;}
+    | ESCREVA LITERAL error codigo{
+        yyerrok;
+        yyclearin;}
+    | RETORNA ID_OU_FUNC error {
+        yyerrok;
+        yyclearin;}
+    | error PONTO_E_VIRG codigo{
+        yyerrok;
+        yyclearin;}
+    | error eof {
+        yyerrok;
+        yyclearin;}
+    | error programa {
+        yyerrok;
+        yyclearin;}
     ;
 
 atribuido:
@@ -101,15 +153,34 @@ atribuido:
     | ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG");}
     | ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG");}
     | CHAMA CHAMADA lista_id PONTO_E_VIRG {production_print("atribuido -> CHAMA CHAMADA lista_id PONTO_E_VIRG");}
+    | error PONTO_E_VIRG {
+        yyerrok;
+        yyclearin;}
+    | ID_OU_FUNC error {
+        yyerrok;
+        yyclearin;}
+    | ID_OU_FUNC OP_ARITMETICO error {
+        yyerrok;
+        yyclearin;}
     ;
 
 lista_id:
     ID_OU_FUNC lista_id {production_print("lista_id -> ID_OU_FUNC lista_id");}
     | {production_print("lista_id -> epsilon");}
+    | error lista_id
     ;
 
 se_entao:
     SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE {production_print("se_entao -> SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE");}
+    | SE error cond FECHA_PAR ENTAO codigo senao_op FIMSE {
+        yyerrok;
+        yyclearin;}
+    | SE ABRE_PAR cond error ENTAO codigo senao_op FIMSE {
+        yyerrok;
+        yyclearin;}
+    | SE ABRE_PAR cond FECHA_PAR error codigo senao_op FIMSE {
+        yyerrok;
+        yyclearin;}
     ;
 
 senao_op:
@@ -127,6 +198,33 @@ cond:
     | LITERAL OP_RELACIONAL ID_OU_FUNC {production_print("cond -> LITERAL OP_RELACIONAL ID_OU_FUNC");}
     | LITERAL OP_RELACIONAL NUMERO {production_print("cond -> LITERAL OP_RELACIONAL NUMERO");}
     | LITERAL OP_RELACIONAL LITERAL {production_print("cond -> LITERAL OP_RELACIONAL LITERAL");}
+    | error OP_RELACIONAL ID_OU_FUNC {
+        yyerrok;
+        yyclearin;}
+    | ID_OU_FUNC error ID_OU_FUNC {
+        yyerrok;
+        yyclearin;}
+    | ID_OU_FUNC OP_RELACIONAL error {
+        yyerrok;
+        yyclearin;}
+    | error OP_RELACIONAL NUMERO {
+        yyerrok;
+        yyclearin;}
+    | NUMERO error NUMERO {
+        yyerrok;
+        yyclearin;}
+    | NUMERO OP_RELACIONAL error {
+        yyerrok;
+        yyclearin;}
+    | error OP_RELACIONAL LITERAL {
+        yyerrok;
+        yyclearin;}
+    | LITERAL error LITERAL {
+        yyerrok;
+        yyclearin;}
+    | LITERAL OP_RELACIONAL error {
+        yyerrok;
+        yyclearin;}
     ;
 
 nome_funcao:
@@ -134,7 +232,7 @@ nome_funcao:
     ;
 
 eof:
-    FIM_DE_ARQ {return 0;}
+    FIM_DE_ARQ
     ;
 %%
 

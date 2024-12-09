@@ -8,6 +8,8 @@ int line_num = 1;
 int col_num = 1;
 char *escopo = "global";
 int categoria = 0;
+int eof = 0;
+int func = 0;
 
 void update_position(const char *text);
 struct hashMap *sym_table;
@@ -21,6 +23,7 @@ whitespace  [ \t\r]
 
 %%
 "funcao" { 
+    func++;
     categoria = 1; 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -199,6 +202,7 @@ whitespace  [ \t\r]
     return COMENTARIO; 
 }
 <<EOF>> {
+    eof = 1;
     return FIM_DE_ARQ; 
 }
 . { 
