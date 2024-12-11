@@ -8,13 +8,13 @@
 static FILE *bril_file = NULL;
 static int label_counter = 0;
 
-void initialize_bril() {
+void initialize_bril(const char *name) {
     bril_file = fopen("output.bril", "w");
     if (!bril_file) {
         fprintf(stderr, "Não foi possível criar o arquivo output.bril\n");
         exit(1);
     }
-    fprintf(bril_file, "@main");
+    fprintf(bril_file, "@%s() {\n", name);
 }
 
 void finalize_bril() {
@@ -85,14 +85,23 @@ void add_print(const char *value) {
 void add_string_print(const char *value) {
     if (bril_file) {
         size_t len = strlen(value);
+        size_t r = 1;
+        char aux = 0;
         for (size_t i = 0; i < len; i++) {
-            fprintf(bril_file, "  l%zu: char = const '%c';\n", i, value[i]);
+          char c = value[i];
+          if(c == '"' || c == '\\' || (aux == '\\' && c == 'n')) {
+            aux = c;
+            continue;
+          }
+          fprintf(bril_file, "  t%zu: char = const '%c';\n", r, value[i]);  
+          r++;
         }
+
         fprintf(bril_file, "  print");
-        for (size_t i = 0; i < len; i++) {
-            fprintf(bril_file, " l%zu", i);
+        for (size_t i = 0; i < r; i++) {
+            fprintf(bril_file, " t%zu", i);
         }
-        fprintf(bril_file, ";\n");
+        fprintf(bril_file, ";");
     }
 }
 

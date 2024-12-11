@@ -61,8 +61,10 @@ programa:
     ;
 
 assinatura:
-    nome_funcao args {production_print("assinatura -> nome_funcao args");}
-    | nome_funcao TIPO tipo_funcao args {production_print("assinatura -> nome_funcao TIPO tipo_funcao args");}
+    nome_funcao args {production_print("assinatura -> nome_funcao args");
+    }
+    | nome_funcao TIPO tipo_funcao args {production_print("assinatura -> nome_funcao TIPO tipo_funcao args");
+    }
     | nome_funcao error tipo_funcao args {
         yyerrok;
         yyclearin;}
@@ -90,13 +92,10 @@ lista_vars:
 
 vars:
     tipo ID_OU_FUNC PONTO_E_VIRG {production_print("vars -> tipo ID_OU_FUNC PONTO_E_VIRG");
-    add_variable($2, convert_type($1));
     }
     | tipo ID_OU_FUNC VIRGULA vars_cont {production_print("vars -> tipo ID_OU_FUNC VIRGULA vars_cont");
-    add_variable($2, convert_type($1));
     }
-    | tipo ID_OU_FUNC ATRIBUICAO atribuido {production_print("vars -> tipo ID_OU_FUNC ATRIBUICAO atribuido");
-    add_variable($2, convert_type($1));}
+    | tipo ID_OU_FUNC ATRIBUICAO atribuido {production_print("vars -> tipo ID_OU_FUNC ATRIBUICAO atribuido");}
     | tipo error PONTO_E_VIRG {
         yyerrok;
         yyclearin;}
@@ -143,7 +142,8 @@ codigo:
     }
     | RETORNA ID_OU_FUNC PONTO_E_VIRG codigo {production_print("codigo -> RETORNA ID_OU_FUNC PONTO_E_VIRG codigo");}
     | FIMFUNCAO eof {production_print("codigo -> FIMFUNCAO");}
-    | FIMFUNCAO programa {production_print("codigo -> FIMFUNCAO");}
+    | FIMFUNCAO programa {production_print("codigo -> FIMFUNCAO");
+    }
     | {production_print("codigo -> epsilon");}
     | ESCREVA ID_OU_FUNC error codigo{
         yyerrok;
@@ -167,7 +167,7 @@ codigo:
 
 atribuido:
     LITERAL PONTO_E_VIRG {production_print("atribuido -> LITERAL PONTO_E_VIRG");
-    add_const_assignment($1, "string", $1)
+    add_const_assignment($1, "string", $1);
     }
     | NUMERO PONTO_E_VIRG {production_print("atribuido -> NUMERO PONTO_E_VIRG");
     add_const_assignment($1, "int", $1);
@@ -281,8 +281,10 @@ void production_print(const char* production) {
 int main(int argc, char **argv) {
     int out;
     sym_table = (struct hashMap*) malloc(sizeof(struct hashMap));
+    initialize_bril("main");
+    
     initializeHashMap(sym_table);
-    initialize_bril();
+    
     if (argc > 1) {
         FILE *file = fopen(argv[1], "r");
         if (!file) {
@@ -309,7 +311,6 @@ int main(int argc, char **argv) {
     }
 
     finalize_bril();
-
     free_symbol_table(sym_table);
 
     return 0;
