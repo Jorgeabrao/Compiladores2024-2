@@ -4,6 +4,8 @@
 #include <string.h>
 #include "hashtbl.h"
 #include "hashtbl.c"
+#include "bril.h"
+#include "bril.c"
 
 extern int yylex();
 extern int yyparse();
@@ -36,8 +38,11 @@ extern int func;
 %token <str>  ID_OU_FUNC NUMERO LITERAL OP_RELACIONAL
 %token <str>  OP_ARITMETICO ATRIBUICAO ABRE_PAR FECHA_PAR
 %token <str>  VIRGULA PONTO_E_VIRG COMENTARIO FIM_DE_ARQ
+%token <fnum> RNUMERO
 
 %type <str> assinatura error
+%type <str> nome_funcao tipo_funcao vars lista_vars vars_cont cond
+%type <num> tipo
 
 %right ATRIBUICAO
 %left OP_RELACIONAL
@@ -70,7 +75,8 @@ tipo_funcao:
     ;
 
 args:
-    ARGS lista_vars FIMARGS codigo {production_print("args -> ARGS lista_vars FIMARGS codigo");}
+    ARGS lista_vars FIMARGS codigo {production_print("args -> ARGS lista_vars FIMARGS codigo");
+    finalize_function_args();}
     | codigo {production_print("args -> codigo");}
     | ARGS lista_vars error codigo {
         yyerrok;
@@ -83,9 +89,14 @@ lista_vars:
     ;
 
 vars:
-    tipo ID_OU_FUNC PONTO_E_VIRG {production_print("vars -> tipo ID_OU_FUNC PONTO_E_VIRG");}
-    | tipo ID_OU_FUNC VIRGULA vars_cont {production_print("vars -> tipo ID_OU_FUNC VIRGULA vars_cont");}
-    | tipo ID_OU_FUNC ATRIBUICAO atribuido {production_print("vars -> tipo ID_OU_FUNC ATRIBUICAO atribuido");}
+    tipo ID_OU_FUNC PONTO_E_VIRG {production_print("vars -> tipo ID_OU_FUNC PONTO_E_VIRG");
+    add_variable($2, convert_type($1));
+    }
+    | tipo ID_OU_FUNC VIRGULA vars_cont {production_print("vars -> tipo ID_OU_FUNC VIRGULA vars_cont");
+    add_variable($2, convert_type($1));
+    }
+    | tipo ID_OU_FUNC ATRIBUICAO atribuido {production_print("vars -> tipo ID_OU_FUNC ATRIBUICAO atribuido");
+    add_variable($2, convert_type($1));}
     | tipo error PONTO_E_VIRG {
         yyerrok;
         yyclearin;}
@@ -116,12 +127,20 @@ tipo:
 
 codigo:
     vars codigo {production_print("codigo -> vars codigo");}
-    | ESCREVA LITERAL PONTO_E_VIRG codigo {production_print("codigo -> ESCREVA LITERAL PONTO_E_VIRG codigo");}
-    | ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo {production_print("codigo -> ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo");}
+    | ESCREVA LITERAL PONTO_E_VIRG codigo {production_print("codigo -> ESCREVA LITERAL PONTO_E_VIRG codigo");
+    add_string_print($2);
+    }
+    | ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo {production_print("codigo -> ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo");
+    add_print($2);
+    }
     | ID_OU_FUNC ATRIBUICAO atribuido codigo {production_print("codigo -> ID_OU_FUNC ATRIBUICAO atribuido codigo");}
     | CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo {production_print("codigo -> CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo");}
     | se_entao codigo {production_print("codigo -> se_entao codigo");}
-    | ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo {production_print("codigo -> ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo");}
+    | ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo {production_print("codigo -> ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo");
+    add_while_condition($3, "while_body", "while_end");
+    add_while_body("while_body");
+    add_end_while("while_end");
+    }
     | RETORNA ID_OU_FUNC PONTO_E_VIRG codigo {production_print("codigo -> RETORNA ID_OU_FUNC PONTO_E_VIRG codigo");}
     | FIMFUNCAO eof {production_print("codigo -> FIMFUNCAO");}
     | FIMFUNCAO programa {production_print("codigo -> FIMFUNCAO");}
@@ -147,11 +166,20 @@ codigo:
     ;
 
 atribuido:
-    LITERAL PONTO_E_VIRG {production_print("atribuido -> LITERAL PONTO_E_VIRG");}
-    | NUMERO PONTO_E_VIRG {production_print("atribuido -> NUMERO PONTO_E_VIRG");}
-    | ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG");}
-    | ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG");}
-    | ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG");}
+    LITERAL PONTO_E_VIRG {production_print("atribuido -> LITERAL PONTO_E_VIRG");
+    add_const_assignment($1, "string", $1)
+    }
+    | NUMERO PONTO_E_VIRG {production_print("atribuido -> NUMERO PONTO_E_VIRG");
+    add_const_assignment($1, "int", $1);
+    }
+    | ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG");
+    add_arithmetic_operation($1, $2, $3, $1);
+    }
+    | ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG");
+    add_arithmetic_operation($1, $2, $3, $1);}
+    | ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG");
+    add_arithmetic_operation($1, $2, $3, $1);
+    }
     | CHAMA CHAMADA lista_id PONTO_E_VIRG {production_print("atribuido -> CHAMA CHAMADA lista_id PONTO_E_VIRG");}
     | error PONTO_E_VIRG {
         yyerrok;
@@ -171,7 +199,10 @@ lista_id:
     ;
 
 se_entao:
-    SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE {production_print("se_entao -> SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE");}
+    SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE {production_print("se_entao -> SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE");
+     add_if_condition($3, "true_label", "false_label");
+     add_if_body("true_label");
+     add_end_if("false_label");}
     | SE error cond FECHA_PAR ENTAO codigo senao_op FIMSE {
         yyerrok;
         yyclearin;}
@@ -251,6 +282,7 @@ int main(int argc, char **argv) {
     int out;
     sym_table = (struct hashMap*) malloc(sizeof(struct hashMap));
     initializeHashMap(sym_table);
+    initialize_bril();
     if (argc > 1) {
         FILE *file = fopen(argv[1], "r");
         if (!file) {
@@ -275,6 +307,8 @@ int main(int argc, char **argv) {
         fclose(yyin); // close input file
         printf("File closed succesfully\n");
     }
+
+    finalize_bril();
 
     free_symbol_table(sym_table);
 

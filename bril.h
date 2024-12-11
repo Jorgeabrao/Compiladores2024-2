@@ -1,5 +1,5 @@
-#ifndef BRIL_GENERATOR_H
-#define BRIL_GENERATOR_H
+#ifndef BRIL_H
+#define BRIL_H
 
 void initialize_bril();
 

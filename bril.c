@@ -1,5 +1,5 @@
-#include "bril_generator.h"
-#include "symbol_table.h"
+#include "bril.h"
+#include "hashtbl.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -68,7 +68,7 @@ void add_arithmetic_operation(const char *left, const char *op, const char *righ
     else if (strcmp(op, "*") == 0) bril_op = "mul";
     else if (strcmp(op, "/") == 0) bril_op = "div";
     else {
-        fprintf(stderr, "Operador desconhecido: %s\n", op);
+        fprintf(stderr, "Operador não reconhecido: %s\n", op);
         return;
     }
     if (bril_file) {
@@ -141,7 +141,7 @@ void add_conditional(const char *left, const char *op, const char *right, const 
     else if (strcmp(op, "<=") == 0) bril_op = "le";
     else if (strcmp(op, ">=") == 0) bril_op = "ge";
     else {
-        fprintf(stderr, "Operador relacional desconhecido: %s\n", op);
+        fprintf(stderr, "Operador relacional não reconhecido: %s\n", op);
         return;
     }
     if (bril_file) {
