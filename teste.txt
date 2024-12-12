@@ -1,17 +1,9 @@
 funcao principal
-args
- caractere letra;
- inteiro cont;
-fimargs
-se(letra==chute) entao
- escreva "Acertei!";
-fimse
-se (cont < 0) entao
- escreva "cont < 0";
-fimse
+caractere chute;
+inteiro cont;
 enquanto (cont > 0) faca
  escreva letra;
  escreva "\n";
- cont = cont - 1;
+ cont = "12";
 fimenquanto
 fimfuncao

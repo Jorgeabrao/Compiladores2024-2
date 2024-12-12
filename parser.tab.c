@@ -80,8 +80,15 @@ extern FILE *yyin;
 void production_print(const char* production);
 void yyerror(const char *s);
 extern struct hashMap *sym_table;
+void yyerror(const char *s);
+int checkType( char *name, char *encounteredType);
+int idsCheckType( char *name, char *name2);
+char* mathCheck(char *ar1, char *ar2, char *op);
+char* idMathCheck(char *ar1, char *ar2, char *op, char *ar2type);
+char* idsMathCheck(char *ar1, char *ar2, char *op);
 
-int verb = 1; //1 to activate verbose mode
+int verb = 0; //1 to activate verbose mode
+int verbose = 1;
 char* aux;
 int i = 0;
 int error = 0;
@@ -89,9 +96,10 @@ extern int line_num;
 extern int col_num;
 extern int eof;
 extern int func;
+extern char *escopo;
 
 
-#line 95 "parser.tab.c"
+#line 103 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -147,29 +155,30 @@ extern int yydebug;
     ARGS = 263,
     FIMARGS = 264,
     ESCREVA = 265,
-    INTEIRO = 266,
-    REAL = 267,
-    CARACTERE = 268,
-    SE = 269,
-    ENTAO = 270,
-    FIMSE = 271,
-    ENQUANTO = 272,
-    FACA = 273,
-    FIMENQUANTO = 274,
-    CHAMADA = 275,
-    SENAO = 276,
-    ID_OU_FUNC = 277,
-    NUMERO = 278,
-    LITERAL = 279,
-    OP_RELACIONAL = 280,
-    OP_ARITMETICO = 281,
-    ATRIBUICAO = 282,
-    ABRE_PAR = 283,
-    FECHA_PAR = 284,
-    VIRGULA = 285,
-    PONTO_E_VIRG = 286,
-    COMENTARIO = 287,
-    FIM_DE_ARQ = 288
+    REAL = 266,
+    CARACTERE = 267,
+    SE = 268,
+    ENTAO = 269,
+    FIMSE = 270,
+    ENQUANTO = 271,
+    FACA = 272,
+    FIMENQUANTO = 273,
+    CHAMADA = 274,
+    SENAO = 275,
+    ID_OU_FUNC = 276,
+    INTEIRO = 277,
+    LITERAL = 278,
+    OP_RELACIONAL = 279,
+    OP_ARITMETICO = 280,
+    ATRIBUICAO = 281,
+    ABRE_PAR = 282,
+    FECHA_PAR = 283,
+    VIRGULA = 284,
+    PONTO_E_VIRG = 285,
+    COMENTARIO = 286,
+    FIM_DE_ARQ = 287,
+    RNUMERO = 288,
+    NUMERO = 289
   };
 #endif
 
@@ -177,13 +186,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 26 "parser.y"
+#line 34 "parser.y"
 
     char *str;
     int num;
     float fnum;
 
-#line 187 "parser.tab.c"
+#line 196 "parser.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -502,19 +511,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  8
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   270
+#define YYLAST   287
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  38
+#define YYNTOKENS  39
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  17
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  82
+#define YYNRULES  92
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  178
+#define YYNSTATES  192
 
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   288
+#define YYMAXUTOK   289
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -530,7 +539,7 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,    36,    34,     2,    35,     2,    37,     2,     2,
+       2,     2,    37,    35,     2,    36,     2,    38,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -554,22 +563,23 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30,    31,    32,    33
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_int16 yyrline[] =
 {
-       0,    52,    52,    53,    59,    60,    61,    67,    68,    69,
-      73,    74,    75,    81,    82,    86,    87,    88,    89,    92,
-      95,   101,   102,   103,   106,   112,   113,   114,   118,   119,
-     120,   121,   122,   123,   124,   125,   126,   127,   128,   129,
-     132,   135,   138,   141,   144,   150,   151,   152,   153,   154,
-     155,   156,   159,   162,   168,   169,   170,   174,   175,   178,
-     181,   187,   188,   192,   193,   194,   195,   196,   197,   198,
-     199,   200,   201,   204,   207,   210,   213,   216,   219,   222,
-     225,   231,   235
+       0,    62,    62,    63,    69,    70,    71,    77,    78,    79,
+      83,    84,    85,    91,    92,    96,    97,    98,    99,   100,
+     103,   106,   112,   113,   114,   117,   123,   124,   125,   129,
+     130,   131,   135,   136,   137,   138,   139,   140,   141,   142,
+     143,   146,   149,   152,   155,   158,   164,   165,   166,   167,
+     171,   174,   177,   180,   181,   184,   187,   193,   194,   195,
+     199,   200,   203,   206,   212,   213,   217,   218,   219,   220,
+     221,   222,   223,   224,   225,   226,   227,   228,   229,   230,
+     231,   232,   233,   236,   239,   242,   245,   248,   251,   254,
+     257,   263,   267
 };
 #endif
 
@@ -579,14 +589,14 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "FUNCAO", "FIMFUNCAO", "CHAMA",
-  "RETORNA", "TIPO", "ARGS", "FIMARGS", "ESCREVA", "INTEIRO", "REAL",
-  "CARACTERE", "SE", "ENTAO", "FIMSE", "ENQUANTO", "FACA", "FIMENQUANTO",
-  "CHAMADA", "SENAO", "ID_OU_FUNC", "NUMERO", "LITERAL", "OP_RELACIONAL",
+  "RETORNA", "TIPO", "ARGS", "FIMARGS", "ESCREVA", "REAL", "CARACTERE",
+  "SE", "ENTAO", "FIMSE", "ENQUANTO", "FACA", "FIMENQUANTO", "CHAMADA",
+  "SENAO", "ID_OU_FUNC", "INTEIRO", "LITERAL", "OP_RELACIONAL",
   "OP_ARITMETICO", "ATRIBUICAO", "ABRE_PAR", "FECHA_PAR", "VIRGULA",
-  "PONTO_E_VIRG", "COMENTARIO", "FIM_DE_ARQ", "'+'", "'-'", "'*'", "'/'",
-  "$accept", "programa", "assinatura", "tipo_funcao", "args", "lista_vars",
-  "vars", "vars_cont", "tipo", "codigo", "atribuido", "lista_id",
-  "se_entao", "senao_op", "cond", "nome_funcao", "eof", YY_NULLPTR
+  "PONTO_E_VIRG", "COMENTARIO", "FIM_DE_ARQ", "RNUMERO", "NUMERO", "'+'",
+  "'-'", "'*'", "'/'", "$accept", "programa", "assinatura", "tipo_funcao",
+  "args", "lista_vars", "vars", "vars_cont", "tipo", "codigo", "atribuido",
+  "lista_id", "se_entao", "senao_op", "cond", "nome_funcao", "eof", YY_NULLPTR
 };
 #endif
 
@@ -598,16 +608,16 @@ static const yytype_int16 yytoknum[] =
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285,   286,   287,   288,    43,    45,    42,    47
+     285,   286,   287,   288,   289,    43,    45,    42,    47
 };
 # endif
 
-#define YYPACT_NINF (-47)
+#define YYPACT_NINF (-52)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-56)
+#define YYTABLE_NINF (-59)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -616,24 +626,26 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      76,   -15,   -15,    22,   -47,   -47,   119,   -47,   -47,     1,
-       8,    -5,    46,    91,   164,    89,   -47,   -47,   -47,    27,
-      45,    85,   -47,   168,    59,   -47,   168,   -47,   -47,   -47,
-      97,   168,   -47,   -47,   145,   -47,   -47,   -47,   112,     5,
-     145,   120,   257,   -47,    15,    17,    65,    65,    65,    62,
-      16,   -47,   113,     0,   -47,   -47,   -47,   -47,   116,   -47,
-     168,   -47,   191,   168,   -47,   168,   168,   168,   168,   127,
-      32,    55,    58,   125,    23,   131,   132,   163,    28,   155,
-     157,   168,   -47,   -47,    62,    60,   -47,   168,   -47,    43,
-     -47,   -47,   -47,   -47,   -47,   -47,    83,   171,    68,   175,
-      71,   170,    74,   184,   185,    61,   188,   -47,     4,   -47,
-      77,   -47,   -47,   -47,   -47,   179,    20,   -47,   -47,   -47,
-     -47,   -47,   -47,   -47,   -47,   -47,   -47,   -47,   -47,   -47,
-     -47,   -47,   -47,   -47,   -47,   -47,   -47,   210,   210,   210,
-     210,   224,     4,     4,   186,   -47,   187,   202,   208,    60,
-     -47,    60,   -47,   198,   198,   198,   198,   221,   -47,   -47,
-     -47,   -47,   -47,   -47,   -47,   -47,   243,   226,   229,   234,
-     235,   168,   -47,   -47,   -47,   -47,   -47,   -47
+     147,    -8,    -8,    59,   -52,   -52,   131,   -52,   -52,    87,
+       9,    84,    86,   100,     3,   151,   -52,   -52,    70,    83,
+      89,   -52,   -52,   178,   104,   -52,   178,   -52,   -52,    94,
+     -52,   178,   -52,   -52,   155,   -52,   -52,   -52,   112,    27,
+     155,   119,   263,   -52,    31,    54,    30,    30,    30,    15,
+      74,   -52,   115,     0,   -52,   -52,   -52,   -52,   124,   -52,
+     178,   -52,   201,   178,   -52,   178,   178,   178,   178,   134,
+      72,    92,   140,    99,   141,    64,   164,   173,   185,    93,
+     179,   180,   195,   178,   -52,   173,    15,   113,   -52,   -52,
+     178,   -52,    32,   -52,   -52,   -52,   -52,   -52,   -52,   -12,
+     187,    45,   192,    49,   197,   198,    53,   212,   237,     5,
+     233,   -52,    26,   -52,    68,   -52,   -52,   -52,   -52,   -52,
+     224,    51,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,
+     -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,
+     -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   223,
+     223,   223,   223,   236,    26,    26,   225,   -52,   232,   239,
+     243,   248,   113,   -52,   113,   -52,   259,   259,   259,   259,
+     245,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,
+     255,   265,   266,   267,   268,   178,   -52,   -52,   -52,   -52,
+     -52,   -52
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -641,38 +653,40 @@ static const yytype_int16 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     0,     0,     0,    81,     3,     0,     2,     1,     0,
-       0,     0,     0,     0,     0,     0,    26,    27,    25,     0,
-       0,     0,     4,     0,     0,    11,     0,     8,     9,     7,
-       0,     0,    82,    44,     0,    43,    37,    36,     0,     0,
+       0,     0,     0,     0,    91,     3,     0,     2,     1,     0,
+       0,     0,     0,     0,     0,     0,    28,    26,     0,     0,
+       0,    27,     4,     0,     0,    11,     0,     9,     7,     0,
+       8,     0,    92,    45,     0,    44,    38,    37,     0,     0,
        0,     0,     0,    13,     0,     0,     0,     0,     0,     0,
-       0,    28,     0,     0,    33,    20,    42,     6,     0,    41,
+       0,    29,     0,     0,    34,    21,    43,     6,     0,    42,
        0,     5,     0,     0,    14,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    18,    19,     0,     0,    15,     0,    35,     0,
-      12,    10,    39,    30,    40,    29,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    51,     0,    52,
-       0,    46,    45,    31,    17,     0,     0,    16,    32,    72,
-      75,    78,    73,    74,    63,    64,    65,    76,    77,    66,
-      67,    68,    79,    80,    69,    70,    71,     0,     0,     0,
-       0,     0,     0,     0,     0,    53,     0,     0,     0,     0,
-      24,     0,    22,    62,    62,    62,    62,     0,    56,    54,
-      50,    49,    48,    47,    23,    21,     0,     0,     0,     0,
-       0,     0,    61,    58,    59,    60,    57,    34
+       0,     0,     0,     0,    19,    20,     0,     0,    15,    18,
+       0,    36,     0,    12,    10,    40,    31,    41,    30,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    54,     0,    55,     0,    46,    48,    47,    32,    17,
+       0,     0,    16,    33,    82,    88,    85,    83,    84,    66,
+      69,    68,    67,    89,    90,    78,    81,    80,    79,    74,
+      77,    76,    75,    86,    87,    70,    73,    72,    71,     0,
+       0,     0,     0,     0,     0,     0,     0,    56,     0,     0,
+       0,     0,     0,    25,     0,    23,    65,    65,    65,    65,
+       0,    59,    57,    53,    52,    49,    51,    50,    24,    22,
+       0,     0,     0,     0,     0,     0,    64,    61,    62,    63,
+      60,    35
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-     -47,    10,   250,   248,    31,   -47,    11,   -12,   -47,   -23,
-     178,   -21,   -47,   -46,   123,   -47,   253
+     -52,     7,   282,   273,   -16,   -52,    71,    33,   -52,   -23,
+     -51,   -34,   -52,    18,   133,   -52,   277
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int16 yydefgoto[] =
 {
-      -1,    33,     5,    34,    22,    42,    23,   117,    24,    25,
-      81,   144,    26,   167,    73,     6,    35
+      -1,    33,     5,    34,    22,    42,    23,   122,    24,    25,
+      83,   156,    26,   181,    74,     6,    35
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -680,104 +694,109 @@ static const yytype_int16 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-      51,    83,     1,    54,     2,   142,    59,     4,    56,     1,
-       3,     2,    27,    28,    29,    38,    65,     1,    67,     2,
-      36,   150,     8,    30,   104,    43,   143,    84,    46,   109,
-      85,    86,    31,    97,    32,   -55,    60,    88,    30,    90,
-      91,    32,    92,    93,    94,    95,    66,    31,    68,    32,
-     151,   152,   105,    64,   110,    47,    99,    98,   113,   101,
-      52,   115,   139,    76,   118,    57,    69,    77,    39,   123,
-      49,    61,   128,    48,    55,   133,   140,     1,   145,     2,
-     100,    53,   116,   102,    78,    79,    80,    70,    71,    72,
-     124,   125,   126,   129,   130,   131,   134,   135,   136,   146,
-     147,   148,    27,    28,    29,   119,   120,   121,   168,   169,
-     170,    44,    49,    45,   153,   154,   155,   156,   157,   -38,
-       9,   158,   159,    10,    11,    12,    13,    14,    55,    15,
-      16,    17,    18,    19,    58,   -38,    20,   164,   -38,   165,
-     -38,    21,    30,   172,    82,   -38,    50,    87,   177,    10,
-      11,    12,    96,    14,   103,    15,    16,    17,    18,    19,
-     106,   -38,    20,   107,   -38,    41,   -38,    21,   -38,    50,
-      74,    75,    10,    11,    12,    16,    17,    18,    15,    16,
-      17,    18,    19,   108,   -38,    20,   111,   -38,   112,   -38,
-      21,   -38,    50,   122,   132,    10,    11,    12,   127,   137,
-     138,    15,    16,    17,    18,    19,   141,   -38,    20,   149,
-     -38,    50,   -38,    89,    10,    11,    12,   160,   161,   166,
-      15,    16,    17,    18,    19,    50,   -38,    20,    10,    11,
-      12,   -38,    21,   162,    15,    16,    17,    18,    19,   163,
-     171,    20,   173,   -38,    50,   174,    21,    10,    11,    12,
-     175,   176,     7,    15,    16,    17,    18,    19,    62,   -38,
-      20,    40,   114,    37,     0,    21,    63,     0,    16,    17,
-      18
+      51,    85,    89,    54,    41,    78,   151,     3,    56,   124,
+       1,   125,     2,     4,    16,    17,    77,    36,    57,   152,
+      78,    79,   126,    80,    61,    21,    86,   154,    59,    87,
+      88,    69,    65,    81,    82,   119,    79,    91,    80,    93,
+      94,    32,    95,    96,    97,    98,   128,   155,    81,    82,
+     134,    70,   163,    71,   144,    67,   -58,    60,    49,     8,
+     118,    66,    55,    72,    73,   108,   129,   123,   130,   157,
+     135,    46,   136,   100,   145,     1,   146,     2,   131,   132,
+     164,   165,   137,   138,    68,    43,   147,   148,     1,   158,
+       2,   159,   109,   102,   113,    29,   101,    47,    27,    28,
+     105,   160,   161,    38,    31,    52,    32,    39,    29,    30,
+      48,    27,    28,    64,   120,    49,   103,    31,   114,    32,
+     171,   172,    30,   106,    55,    53,   166,   167,   168,   169,
+     170,   -39,     9,    58,   121,    10,    11,    12,    13,    14,
+      29,    15,    16,    17,    18,    84,   -39,    19,     1,   -39,
+       2,   -39,    20,    21,    90,   -39,    50,   186,    99,    10,
+      11,    12,   191,    14,   104,    15,    16,    17,    18,   107,
+     -39,    19,    44,   -39,    45,   -39,    20,    21,   -39,    50,
+      75,    76,    10,    11,    12,   182,   183,   184,    15,    16,
+      17,    18,   110,   -39,    19,   178,   -39,   179,   -39,    20,
+      21,   -39,    50,   111,   112,    10,    11,    12,   127,   115,
+     116,    15,    16,    17,    18,   133,   -39,    19,   139,   -39,
+     140,   -39,    92,    21,    50,   117,   149,    10,    11,    12,
+     141,   142,   143,    15,    16,    17,    18,    50,   -39,    19,
+      10,    11,    12,   -39,    20,    21,    15,    16,    17,    18,
+     153,   150,    19,   162,   -39,   173,    50,    20,    21,    10,
+      11,    12,   174,   185,    62,    15,    16,    17,    18,   175,
+     -39,    19,    63,   176,    16,    17,    20,    21,   177,   180,
+     187,   188,   189,   190,     7,    21,    40,    37
 };
 
-static const yytype_int16 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-      23,     1,     1,    26,     3,     1,     1,    22,    31,     1,
-       0,     3,    11,    12,    13,    20,     1,     1,     1,     3,
-      10,     1,     0,    22,     1,    14,    22,    27,     1,     1,
-      30,    31,    31,     1,    33,    31,    31,    60,    22,    62,
-      63,    33,    65,    66,    67,    68,    31,    31,    31,    33,
-      30,    31,    29,    42,    26,    28,     1,    25,    81,     1,
-       1,     1,     1,     1,    87,    34,     1,     5,    22,     1,
-      27,    40,     1,    28,    31,     1,    15,     1,     1,     3,
-      25,    22,    22,    25,    22,    23,    24,    22,    23,    24,
-      22,    23,    24,    22,    23,    24,    22,    23,    24,    22,
-      23,    24,    11,    12,    13,    22,    23,    24,   154,   155,
-     156,    22,    27,    24,   137,   138,   139,   140,   141,     0,
-       1,   142,   143,     4,     5,     6,     7,     8,    31,    10,
-      11,    12,    13,    14,    22,    16,    17,   149,    19,   151,
-      21,    22,    22,   166,    31,     0,     1,    31,   171,     4,
-       5,     6,    25,     8,    29,    10,    11,    12,    13,    14,
-      29,    16,    17,    31,    19,     1,    21,    22,     0,     1,
-      47,    48,     4,     5,     6,    11,    12,    13,    10,    11,
-      12,    13,    14,    20,    16,    17,    31,    19,    31,    21,
-      22,     0,     1,    22,    24,     4,     5,     6,    23,    15,
-      15,    10,    11,    12,    13,    14,    18,    16,    17,    30,
-      19,     1,    21,    22,     4,     5,     6,    31,    31,    21,
-      10,    11,    12,    13,    14,     1,    16,    17,     4,     5,
-       6,    21,    22,    31,    10,    11,    12,    13,    14,    31,
-      19,    17,    16,    19,     1,    16,    22,     4,     5,     6,
-      16,    16,     2,    10,    11,    12,    13,    14,     1,    16,
-      17,    13,    84,    10,    -1,    22,     9,    -1,    11,    12,
-      13
+      23,     1,    53,    26,     1,     5,     1,     0,    31,    21,
+       1,    23,     3,    21,    11,    12,     1,    10,    34,    14,
+       5,    21,    34,    23,    40,    22,    26,     1,     1,    29,
+      30,     1,     1,    33,    34,    86,    21,    60,    23,    62,
+      63,    32,    65,    66,    67,    68,     1,    21,    33,    34,
+       1,    21,     1,    23,     1,     1,    30,    30,    26,     0,
+      83,    30,    30,    33,    34,     1,    21,    90,    23,     1,
+      21,     1,    23,     1,    21,     1,    23,     3,    33,    34,
+      29,    30,    33,    34,    30,    14,    33,    34,     1,    21,
+       3,    23,    28,     1,     1,    21,    24,    27,    11,    12,
+       1,    33,    34,    19,    30,     1,    32,    21,    21,    22,
+      27,    11,    12,    42,     1,    26,    24,    30,    25,    32,
+     154,   155,    22,    24,    30,    21,   149,   150,   151,   152,
+     153,     0,     1,    21,    21,     4,     5,     6,     7,     8,
+      21,    10,    11,    12,    13,    30,    15,    16,     1,    18,
+       3,    20,    21,    22,    30,     0,     1,   180,    24,     4,
+       5,     6,   185,     8,    24,    10,    11,    12,    13,    28,
+      15,    16,    21,    18,    23,    20,    21,    22,     0,     1,
+      47,    48,     4,     5,     6,   167,   168,   169,    10,    11,
+      12,    13,    28,    15,    16,   162,    18,   164,    20,    21,
+      22,     0,     1,    30,    19,     4,     5,     6,    21,    30,
+      30,    10,    11,    12,    13,    23,    15,    16,    21,    18,
+      23,    20,    21,    22,     1,    30,    14,     4,     5,     6,
+      33,    34,    34,    10,    11,    12,    13,     1,    15,    16,
+       4,     5,     6,    20,    21,    22,    10,    11,    12,    13,
+      17,    14,    16,    29,    18,    30,     1,    21,    22,     4,
+       5,     6,    30,    18,     1,    10,    11,    12,    13,    30,
+      15,    16,     9,    30,    11,    12,    21,    22,    30,    20,
+      15,    15,    15,    15,     2,    22,    13,    10
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     1,     3,    39,    22,    40,    53,    40,     0,     1,
-       4,     5,     6,     7,     8,    10,    11,    12,    13,    14,
-      17,    22,    42,    44,    46,    47,    50,    11,    12,    13,
-      22,    31,    33,    39,    41,    54,    39,    54,    20,    22,
-      41,     1,    43,    44,    22,    24,     1,    28,    28,    27,
-       1,    47,     1,    22,    47,    31,    47,    42,    22,     1,
-      31,    42,     1,     9,    44,     1,    31,     1,    31,     1,
-      22,    23,    24,    52,    52,    52,     1,     5,    22,    23,
-      24,    48,    31,     1,    27,    30,    31,    31,    47,    22,
-      47,    47,    47,    47,    47,    47,    25,     1,    25,     1,
-      25,     1,    25,    29,     1,    29,    29,    31,    20,     1,
-      26,    31,    31,    47,    48,     1,    22,    45,    47,    22,
-      23,    24,    22,     1,    22,    23,    24,    23,     1,    22,
-      23,    24,    24,     1,    22,    23,    24,    15,    15,     1,
-      15,    18,     1,    22,    49,     1,    22,    23,    24,    30,
-       1,    30,    31,    47,    47,    47,    47,    47,    49,    49,
-      31,    31,    31,    31,    45,    45,    21,    51,    51,    51,
-      51,    19,    47,    16,    16,    16,    16,    47
+       0,     1,     3,    40,    21,    41,    54,    41,     0,     1,
+       4,     5,     6,     7,     8,    10,    11,    12,    13,    16,
+      21,    22,    43,    45,    47,    48,    51,    11,    12,    21,
+      22,    30,    32,    40,    42,    55,    40,    55,    19,    21,
+      42,     1,    44,    45,    21,    23,     1,    27,    27,    26,
+       1,    48,     1,    21,    48,    30,    48,    43,    21,     1,
+      30,    43,     1,     9,    45,     1,    30,     1,    30,     1,
+      21,    23,    33,    34,    53,    53,    53,     1,     5,    21,
+      23,    33,    34,    49,    30,     1,    26,    29,    30,    49,
+      30,    48,    21,    48,    48,    48,    48,    48,    48,    24,
+       1,    24,     1,    24,    24,     1,    24,    28,     1,    28,
+      28,    30,    19,     1,    25,    30,    30,    30,    48,    49,
+       1,    21,    46,    48,    21,    23,    34,    21,     1,    21,
+      23,    33,    34,    23,     1,    21,    23,    33,    34,    21,
+      23,    33,    34,    34,     1,    21,    23,    33,    34,    14,
+      14,     1,    14,    17,     1,    21,    50,     1,    21,    23,
+      33,    34,    29,     1,    29,    30,    48,    48,    48,    48,
+      48,    50,    50,    30,    30,    30,    30,    30,    46,    46,
+      20,    52,    52,    52,    52,    18,    48,    15,    15,    15,
+      15,    48
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    38,    39,    39,    40,    40,    40,    41,    41,    41,
-      42,    42,    42,    43,    43,    44,    44,    44,    44,    44,
-      44,    45,    45,    45,    45,    46,    46,    46,    47,    47,
-      47,    47,    47,    47,    47,    47,    47,    47,    47,    47,
-      47,    47,    47,    47,    47,    48,    48,    48,    48,    48,
-      48,    48,    48,    48,    49,    49,    49,    50,    50,    50,
-      50,    51,    51,    52,    52,    52,    52,    52,    52,    52,
-      52,    52,    52,    52,    52,    52,    52,    52,    52,    52,
-      52,    53,    54
+       0,    39,    40,    40,    41,    41,    41,    42,    42,    42,
+      43,    43,    43,    44,    44,    45,    45,    45,    45,    45,
+      45,    45,    46,    46,    46,    46,    47,    47,    47,    48,
+      48,    48,    48,    48,    48,    48,    48,    48,    48,    48,
+      48,    48,    48,    48,    48,    48,    49,    49,    49,    49,
+      49,    49,    49,    49,    49,    49,    49,    50,    50,    50,
+      51,    51,    51,    51,    52,    52,    53,    53,    53,    53,
+      53,    53,    53,    53,    53,    53,    53,    53,    53,    53,
+      53,    53,    53,    53,    53,    53,    53,    53,    53,    53,
+      53,    54,    55
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -785,11 +804,12 @@ static const yytype_int8 yyr2[] =
 {
        0,     2,     2,     2,     2,     4,     4,     1,     1,     1,
        4,     1,     4,     1,     2,     3,     4,     4,     3,     3,
-       3,     3,     2,     3,     2,     1,     1,     1,     2,     4,
-       4,     4,     5,     2,     8,     4,     2,     2,     0,     4,
-       4,     3,     3,     2,     2,     2,     2,     4,     4,     4,
-       4,     2,     2,     3,     2,     0,     2,     8,     8,     8,
-       8,     2,     0,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     2,     3,     2,     1,     1,     1,     2,
+       4,     4,     4,     5,     2,     8,     4,     2,     2,     0,
+       4,     4,     3,     3,     2,     2,     2,     2,     2,     4,
+       4,     4,     4,     4,     2,     2,     3,     2,     0,     2,
+       8,     8,     8,     8,     2,     0,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
        3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
        3,     1,     1
 };
@@ -1487,539 +1507,611 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 52 "parser.y"
+#line 62 "parser.y"
                       { func--; production_print("programa -> FUNCAO assinatura");if(eof == 1 && func == 0) return 0;}
-#line 1493 "parser.tab.c"
-    break;
-
-  case 3:
-#line 53 "parser.y"
-                      {
-        yyerrok;
-        yyclearin;if(eof == 1) return 0;}
-#line 1501 "parser.tab.c"
-    break;
-
-  case 4:
-#line 59 "parser.y"
-                     {production_print("assinatura -> nome_funcao args");}
-#line 1507 "parser.tab.c"
-    break;
-
-  case 5:
-#line 60 "parser.y"
-                                        {production_print("assinatura -> nome_funcao TIPO tipo_funcao args");}
 #line 1513 "parser.tab.c"
     break;
 
-  case 6:
-#line 61 "parser.y"
-                                         {
+  case 3:
+#line 63 "parser.y"
+                      {
         yyerrok;
-        yyclearin;}
+        yyclearin;if(eof == 1) return 0;}
 #line 1521 "parser.tab.c"
     break;
 
-  case 7:
-#line 67 "parser.y"
-              {production_print("tipo_funcao -> CARACTERE");}
+  case 4:
+#line 69 "parser.y"
+                     {production_print("assinatura -> nome_funcao args");}
 #line 1527 "parser.tab.c"
     break;
 
-  case 8:
-#line 68 "parser.y"
-              {production_print("tipo_funcao -> INTEIRO");}
+  case 5:
+#line 70 "parser.y"
+                                        {production_print("assinatura -> nome_funcao TIPO tipo_funcao args");}
 #line 1533 "parser.tab.c"
     break;
 
-  case 9:
-#line 69 "parser.y"
-           {production_print("tipo_funcao -> REAL");}
-#line 1539 "parser.tab.c"
-    break;
-
-  case 10:
-#line 73 "parser.y"
-                                   {production_print("args -> ARGS lista_vars FIMARGS codigo");}
-#line 1545 "parser.tab.c"
-    break;
-
-  case 11:
-#line 74 "parser.y"
-             {production_print("args -> codigo");}
-#line 1551 "parser.tab.c"
-    break;
-
-  case 12:
-#line 75 "parser.y"
-                                   {
+  case 6:
+#line 71 "parser.y"
+                                         {
         yyerrok;
         yyclearin;}
+#line 1541 "parser.tab.c"
+    break;
+
+  case 7:
+#line 77 "parser.y"
+              {production_print("tipo_funcao -> CARACTERE");}
+#line 1547 "parser.tab.c"
+    break;
+
+  case 8:
+#line 78 "parser.y"
+              {production_print("tipo_funcao -> INTEIRO");}
+#line 1553 "parser.tab.c"
+    break;
+
+  case 9:
+#line 79 "parser.y"
+           {production_print("tipo_funcao -> REAL");}
 #line 1559 "parser.tab.c"
     break;
 
-  case 13:
-#line 81 "parser.y"
-         {production_print("lista_vars -> vars");}
+  case 10:
+#line 83 "parser.y"
+                                   {production_print("args -> ARGS lista_vars FIMARGS codigo");}
 #line 1565 "parser.tab.c"
     break;
 
-  case 14:
-#line 82 "parser.y"
-                      {production_print("lista_vars -> lista_vars vars");}
+  case 11:
+#line 84 "parser.y"
+             {production_print("args -> codigo");}
 #line 1571 "parser.tab.c"
     break;
 
-  case 15:
-#line 86 "parser.y"
-                                 {production_print("vars -> tipo ID_OU_FUNC PONTO_E_VIRG");}
-#line 1577 "parser.tab.c"
-    break;
-
-  case 16:
-#line 87 "parser.y"
-                                        {production_print("vars -> tipo ID_OU_FUNC VIRGULA vars_cont");}
-#line 1583 "parser.tab.c"
-    break;
-
-  case 17:
-#line 88 "parser.y"
-                                           {production_print("vars -> tipo ID_OU_FUNC ATRIBUICAO atribuido");}
-#line 1589 "parser.tab.c"
-    break;
-
-  case 18:
-#line 89 "parser.y"
-                              {
+  case 12:
+#line 85 "parser.y"
+                                   {
         yyerrok;
         yyclearin;}
+#line 1579 "parser.tab.c"
+    break;
+
+  case 13:
+#line 91 "parser.y"
+         {production_print("lista_vars -> vars");}
+#line 1585 "parser.tab.c"
+    break;
+
+  case 14:
+#line 92 "parser.y"
+                      {production_print("lista_vars -> lista_vars vars");}
+#line 1591 "parser.tab.c"
+    break;
+
+  case 15:
+#line 96 "parser.y"
+                                 {production_print("vars -> tipo ID_OU_FUNC PONTO_E_VIRG"); }
 #line 1597 "parser.tab.c"
     break;
 
+  case 16:
+#line 97 "parser.y"
+                                        {production_print("vars -> tipo ID_OU_FUNC VIRGULA vars_cont");}
+#line 1603 "parser.tab.c"
+    break;
+
+  case 17:
+#line 98 "parser.y"
+                                           {production_print("vars -> tipo ID_OU_FUNC ATRIBUICAO atribuido"); aux = get_type(sym_table, (yyvsp[-2].str), escopo);}
+#line 1609 "parser.tab.c"
+    break;
+
+  case 18:
+#line 99 "parser.y"
+                                {}
+#line 1615 "parser.tab.c"
+    break;
+
   case 19:
-#line 92 "parser.y"
-                           {
+#line 100 "parser.y"
+                              {
         yyerrok;
         yyclearin;}
-#line 1605 "parser.tab.c"
+#line 1623 "parser.tab.c"
     break;
 
   case 20:
-#line 95 "parser.y"
-                                   {
-         yyerrok;
+#line 103 "parser.y"
+                           {
+        yyerrok;
         yyclearin;}
-#line 1613 "parser.tab.c"
+#line 1631 "parser.tab.c"
     break;
 
   case 21:
-#line 101 "parser.y"
-                                 {production_print("vars_cont -> ID_OU_FUNC VIRGULA vars_cont");}
-#line 1619 "parser.tab.c"
+#line 106 "parser.y"
+                                   {
+         yyerrok;
+        yyclearin;}
+#line 1639 "parser.tab.c"
     break;
 
   case 22:
-#line 102 "parser.y"
-                              {production_print("vars_cont -> ID_OU_FUNC PONTO_E_VIRG");}
-#line 1625 "parser.tab.c"
+#line 112 "parser.y"
+                                 {production_print("vars_cont -> ID_OU_FUNC VIRGULA vars_cont");}
+#line 1645 "parser.tab.c"
     break;
 
   case 23:
-#line 103 "parser.y"
-                             {
-        yyerrok;
-        yyclearin;}
-#line 1633 "parser.tab.c"
+#line 113 "parser.y"
+                              {production_print("vars_cont -> ID_OU_FUNC PONTO_E_VIRG");}
+#line 1651 "parser.tab.c"
     break;
 
   case 24:
-#line 106 "parser.y"
-                      {
+#line 114 "parser.y"
+                             {
         yyerrok;
         yyclearin;}
-#line 1641 "parser.tab.c"
-    break;
-
-  case 25:
-#line 112 "parser.y"
-              {production_print("tipo -> CARACTERE");}
-#line 1647 "parser.tab.c"
-    break;
-
-  case 26:
-#line 113 "parser.y"
-              {production_print("tipo -> INTEIRO");}
-#line 1653 "parser.tab.c"
-    break;
-
-  case 27:
-#line 114 "parser.y"
-           {production_print("tipo -> REAL");}
 #line 1659 "parser.tab.c"
     break;
 
+  case 25:
+#line 117 "parser.y"
+                      {
+        yyerrok;
+        yyclearin;}
+#line 1667 "parser.tab.c"
+    break;
+
+  case 26:
+#line 123 "parser.y"
+              {production_print("tipo -> CARACTERE");}
+#line 1673 "parser.tab.c"
+    break;
+
+  case 27:
+#line 124 "parser.y"
+              {production_print("tipo -> INTEIRO");}
+#line 1679 "parser.tab.c"
+    break;
+
   case 28:
-#line 118 "parser.y"
-                {production_print("codigo -> vars codigo");}
-#line 1665 "parser.tab.c"
+#line 125 "parser.y"
+           {production_print("tipo -> REAL");}
+#line 1685 "parser.tab.c"
     break;
 
   case 29:
-#line 119 "parser.y"
-                                          {production_print("codigo -> ESCREVA LITERAL PONTO_E_VIRG codigo");}
-#line 1671 "parser.tab.c"
+#line 129 "parser.y"
+                {production_print("codigo -> vars codigo");}
+#line 1691 "parser.tab.c"
     break;
 
   case 30:
-#line 120 "parser.y"
-                                             {production_print("codigo -> ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo");}
-#line 1677 "parser.tab.c"
+#line 130 "parser.y"
+                                          {production_print("codigo -> ESCREVA LITERAL PONTO_E_VIRG codigo");}
+#line 1697 "parser.tab.c"
     break;
 
   case 31:
-#line 121 "parser.y"
-                                             {production_print("codigo -> ID_OU_FUNC ATRIBUICAO atribuido codigo");}
-#line 1683 "parser.tab.c"
+#line 131 "parser.y"
+                                             {production_print("codigo -> ESCREVA ID_OU_FUNC PONTO_E_VIRG codigo");
+        if(get_type(sym_table, (yyvsp[-2].str), escopo) != "literal") printf("\033[31mErro:%d:%d: 'escreva' espera tipo 'literal' e '%s' é '%s'\n\033[0m", line_num, col_num, (yyvsp[-2].str), get_type(sym_table, (yyvsp[-2].str), escopo));
+        error++;
+    }
+#line 1706 "parser.tab.c"
     break;
 
   case 32:
-#line 122 "parser.y"
-                                                   {production_print("codigo -> CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo");}
-#line 1689 "parser.tab.c"
+#line 135 "parser.y"
+                                             {production_print("codigo -> ID_OU_FUNC ATRIBUICAO atribuido codigo");aux = get_type(sym_table, (yyvsp[-2].str), escopo);}
+#line 1712 "parser.tab.c"
     break;
 
   case 33:
-#line 123 "parser.y"
-                      {production_print("codigo -> se_entao codigo");}
-#line 1695 "parser.tab.c"
+#line 136 "parser.y"
+                                                   {production_print("codigo -> CHAMA CHAMADA ID_OU_FUNC PONTO_E_VIRG codigo");}
+#line 1718 "parser.tab.c"
     break;
 
   case 34:
-#line 124 "parser.y"
-                                                                      {production_print("codigo -> ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo");}
-#line 1701 "parser.tab.c"
+#line 137 "parser.y"
+                      {production_print("codigo -> se_entao codigo");}
+#line 1724 "parser.tab.c"
     break;
 
   case 35:
-#line 125 "parser.y"
-                                             {production_print("codigo -> RETORNA ID_OU_FUNC PONTO_E_VIRG codigo");}
-#line 1707 "parser.tab.c"
+#line 138 "parser.y"
+                                                                      {production_print("codigo -> ENQUANTO ABRE_PAR cond FECHA_PAR FACA codigo FIMENQUANTO codigo");}
+#line 1730 "parser.tab.c"
     break;
 
   case 36:
-#line 126 "parser.y"
-                    {production_print("codigo -> FIMFUNCAO");}
-#line 1713 "parser.tab.c"
+#line 139 "parser.y"
+                                             {production_print("codigo -> RETORNA ID_OU_FUNC PONTO_E_VIRG codigo");}
+#line 1736 "parser.tab.c"
     break;
 
   case 37:
-#line 127 "parser.y"
-                         {production_print("codigo -> FIMFUNCAO");}
-#line 1719 "parser.tab.c"
+#line 140 "parser.y"
+                    {production_print("codigo -> FIMFUNCAO");}
+#line 1742 "parser.tab.c"
     break;
 
   case 38:
-#line 128 "parser.y"
-      {production_print("codigo -> epsilon");}
-#line 1725 "parser.tab.c"
+#line 141 "parser.y"
+                         {production_print("codigo -> FIMFUNCAO");}
+#line 1748 "parser.tab.c"
     break;
 
   case 39:
-#line 129 "parser.y"
-                                     {
-        yyerrok;
-        yyclearin;}
-#line 1733 "parser.tab.c"
+#line 142 "parser.y"
+      {production_print("codigo -> epsilon");}
+#line 1754 "parser.tab.c"
     break;
 
   case 40:
-#line 132 "parser.y"
-                                  {
-        yyerrok;
-        yyclearin;}
-#line 1741 "parser.tab.c"
-    break;
-
-  case 41:
-#line 135 "parser.y"
-                               {
-        yyerrok;
-        yyclearin;}
-#line 1749 "parser.tab.c"
-    break;
-
-  case 42:
-#line 138 "parser.y"
-                               {
-        yyerrok;
-        yyclearin;}
-#line 1757 "parser.tab.c"
-    break;
-
-  case 43:
-#line 141 "parser.y"
-                {
-        yyerrok;
-        yyclearin;}
-#line 1765 "parser.tab.c"
-    break;
-
-  case 44:
-#line 144 "parser.y"
-                     {
-        yyerrok;
-        yyclearin;}
-#line 1773 "parser.tab.c"
-    break;
-
-  case 45:
-#line 150 "parser.y"
-                         {production_print("atribuido -> LITERAL PONTO_E_VIRG");}
-#line 1779 "parser.tab.c"
-    break;
-
-  case 46:
-#line 151 "parser.y"
-                          {production_print("atribuido -> NUMERO PONTO_E_VIRG");}
-#line 1785 "parser.tab.c"
-    break;
-
-  case 47:
-#line 152 "parser.y"
-                                                    {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG");}
-#line 1791 "parser.tab.c"
-    break;
-
-  case 48:
-#line 153 "parser.y"
-                                                   {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG");}
-#line 1797 "parser.tab.c"
-    break;
-
-  case 49:
-#line 154 "parser.y"
-                                                       {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG");}
-#line 1803 "parser.tab.c"
-    break;
-
-  case 50:
-#line 155 "parser.y"
-                                          {production_print("atribuido -> CHAMA CHAMADA lista_id PONTO_E_VIRG");}
-#line 1809 "parser.tab.c"
-    break;
-
-  case 51:
-#line 156 "parser.y"
-                         {
-        yyerrok;
-        yyclearin;}
-#line 1817 "parser.tab.c"
-    break;
-
-  case 52:
-#line 159 "parser.y"
-                       {
-        yyerrok;
-        yyclearin;}
-#line 1825 "parser.tab.c"
-    break;
-
-  case 53:
-#line 162 "parser.y"
+#line 143 "parser.y"
                                      {
         yyerrok;
         yyclearin;}
-#line 1833 "parser.tab.c"
+#line 1762 "parser.tab.c"
     break;
 
-  case 54:
-#line 168 "parser.y"
-                        {production_print("lista_id -> ID_OU_FUNC lista_id");}
-#line 1839 "parser.tab.c"
+  case 41:
+#line 146 "parser.y"
+                                  {
+        yyerrok;
+        yyclearin;}
+#line 1770 "parser.tab.c"
     break;
 
-  case 55:
-#line 169 "parser.y"
-      {production_print("lista_id -> epsilon");}
+  case 42:
+#line 149 "parser.y"
+                               {
+        yyerrok;
+        yyclearin;}
+#line 1778 "parser.tab.c"
+    break;
+
+  case 43:
+#line 152 "parser.y"
+                               {
+        yyerrok;
+        yyclearin;}
+#line 1786 "parser.tab.c"
+    break;
+
+  case 44:
+#line 155 "parser.y"
+                {
+        yyerrok;
+        yyclearin;}
+#line 1794 "parser.tab.c"
+    break;
+
+  case 45:
+#line 158 "parser.y"
+                     {
+        yyerrok;
+        yyclearin;}
+#line 1802 "parser.tab.c"
+    break;
+
+  case 46:
+#line 164 "parser.y"
+                         {production_print("atribuido -> LITERAL PONTO_E_VIRG"); checkType(aux, "literal");}
+#line 1808 "parser.tab.c"
+    break;
+
+  case 47:
+#line 165 "parser.y"
+                          {production_print("atribuido -> NUMERO PONTO_E_VIRG"); checkType(aux, "inteiro");}
+#line 1814 "parser.tab.c"
+    break;
+
+  case 48:
+#line 166 "parser.y"
+                           {checkType(aux, "real");}
+#line 1820 "parser.tab.c"
+    break;
+
+  case 49:
+#line 167 "parser.y"
+                                                    {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO LITERAL PONTO_E_VIRG");
+        error++; 
+        printf("\033[31mError:%d:%d: Operador não pode ser literal: %s: 'literal'\033[0m\n", line_num, col_num, (yyvsp[-1].str));
+    }
+#line 1829 "parser.tab.c"
+    break;
+
+  case 50:
+#line 171 "parser.y"
+                                                   {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO NUMERO PONTO_E_VIRG");
+        if(checkType(aux, mathCheck((yyvsp[-3].str), "inteiro", (yyvsp[-2].str))) == 0) update_value(sym_table, aux, escopo, get_value(sym_table, (yyvsp[-3].str), escopo));
+    }
+#line 1837 "parser.tab.c"
+    break;
+
+  case 51:
+#line 174 "parser.y"
+                                                    {
+        if(checkType(aux, mathCheck((yyvsp[-3].str), "real", (yyvsp[-2].str))) == 0) update_value(sym_table, aux, escopo, get_value(sym_table, (yyvsp[-3].str), escopo));
+    }
 #line 1845 "parser.tab.c"
     break;
 
-  case 57:
-#line 174 "parser.y"
-                                                           {production_print("se_entao -> SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE");}
-#line 1851 "parser.tab.c"
+  case 52:
+#line 177 "parser.y"
+                                                       {production_print("atribuido -> ID_OU_FUNC OP_ARITMETICO ID_OU_FUNC PONTO_E_VIRG");
+        if(checkType(aux, idsMathCheck((yyvsp[-3].str), (yyvsp[-1].str), (yyvsp[-2].str))) == 0) update_value(sym_table, aux, escopo, get_value(sym_table, (yyvsp[-3].str), escopo));
+    }
+#line 1853 "parser.tab.c"
     break;
 
-  case 58:
-#line 175 "parser.y"
-                                                          {
-        yyerrok;
-        yyclearin;}
+  case 53:
+#line 180 "parser.y"
+                                          {production_print("atribuido -> CHAMA CHAMADA lista_id PONTO_E_VIRG");}
 #line 1859 "parser.tab.c"
     break;
 
-  case 59:
-#line 178 "parser.y"
-                                                         {
+  case 54:
+#line 181 "parser.y"
+                         {
         yyerrok;
         yyclearin;}
 #line 1867 "parser.tab.c"
     break;
 
-  case 60:
-#line 181 "parser.y"
-                                                             {
+  case 55:
+#line 184 "parser.y"
+                       {
         yyerrok;
         yyclearin;}
 #line 1875 "parser.tab.c"
     break;
 
-  case 61:
+  case 56:
 #line 187 "parser.y"
-                 {production_print("senao_op -> SENAO codigo");}
-#line 1881 "parser.tab.c"
+                                     {
+        yyerrok;
+        yyclearin;}
+#line 1883 "parser.tab.c"
+    break;
+
+  case 57:
+#line 193 "parser.y"
+                        {production_print("lista_id -> ID_OU_FUNC lista_id");}
+#line 1889 "parser.tab.c"
+    break;
+
+  case 58:
+#line 194 "parser.y"
+      {production_print("lista_id -> epsilon");}
+#line 1895 "parser.tab.c"
+    break;
+
+  case 60:
+#line 199 "parser.y"
+                                                           {production_print("se_entao -> SE ABRE_PAR cond FECHA_PAR ENTAO codigo senao_op FIMSE");}
+#line 1901 "parser.tab.c"
+    break;
+
+  case 61:
+#line 200 "parser.y"
+                                                          {
+        yyerrok;
+        yyclearin;}
+#line 1909 "parser.tab.c"
     break;
 
   case 62:
-#line 188 "parser.y"
-      {production_print("senao_op -> epsilon");}
-#line 1887 "parser.tab.c"
-    break;
-
-  case 63:
-#line 192 "parser.y"
-                                        {production_print("cond -> ID_OU_FUNC OP_RELACIONAL ID_OU_FUNC");}
-#line 1893 "parser.tab.c"
-    break;
-
-  case 64:
-#line 193 "parser.y"
-                                      {production_print("cond -> ID_OU_FUNC OP_RELACIONAL NUMERO");}
-#line 1899 "parser.tab.c"
-    break;
-
-  case 65:
-#line 194 "parser.y"
-                                       {production_print("cond -> ID_OU_FUNC OP_RELACIONAL LITERAL");}
-#line 1905 "parser.tab.c"
-    break;
-
-  case 66:
-#line 195 "parser.y"
-                                      {production_print("cond -> NUMERO OP_RELACIONAL ID_OU_FUNC");}
-#line 1911 "parser.tab.c"
-    break;
-
-  case 67:
-#line 196 "parser.y"
-                                  {production_print("cond -> NUMERO OP_RELACIONAL NUMERO");}
+#line 203 "parser.y"
+                                                         {
+        yyerrok;
+        yyclearin;}
 #line 1917 "parser.tab.c"
     break;
 
-  case 68:
-#line 197 "parser.y"
-                                   {production_print("cond -> NUMERO OP_RELACIONAL LITERAL");}
-#line 1923 "parser.tab.c"
-    break;
-
-  case 69:
-#line 198 "parser.y"
-                                       {production_print("cond -> LITERAL OP_RELACIONAL ID_OU_FUNC");}
-#line 1929 "parser.tab.c"
-    break;
-
-  case 70:
-#line 199 "parser.y"
-                                   {production_print("cond -> LITERAL OP_RELACIONAL NUMERO");}
-#line 1935 "parser.tab.c"
-    break;
-
-  case 71:
-#line 200 "parser.y"
-                                    {production_print("cond -> LITERAL OP_RELACIONAL LITERAL");}
-#line 1941 "parser.tab.c"
-    break;
-
-  case 72:
-#line 201 "parser.y"
-                                     {
+  case 63:
+#line 206 "parser.y"
+                                                             {
         yyerrok;
         yyclearin;}
+#line 1925 "parser.tab.c"
+    break;
+
+  case 64:
+#line 212 "parser.y"
+                 {production_print("senao_op -> SENAO codigo");}
+#line 1931 "parser.tab.c"
+    break;
+
+  case 65:
+#line 213 "parser.y"
+      {production_print("senao_op -> epsilon");}
+#line 1937 "parser.tab.c"
+    break;
+
+  case 66:
+#line 217 "parser.y"
+                                        {production_print("cond -> ID_OU_FUNC OP_RELACIONAL ID_OU_FUNC"); idsCheckType((yyvsp[-2].str), (yyvsp[0].str));}
+#line 1943 "parser.tab.c"
+    break;
+
+  case 67:
+#line 218 "parser.y"
+                                      {production_print("cond -> ID_OU_FUNC OP_RELACIONAL NUMERO"); checkType((yyvsp[-2].str), "inteiro");}
 #line 1949 "parser.tab.c"
     break;
 
-  case 73:
-#line 204 "parser.y"
-                                  {
-        yyerrok;
-        yyclearin;}
-#line 1957 "parser.tab.c"
+  case 68:
+#line 219 "parser.y"
+                                       {checkType((yyvsp[-2].str), "real");}
+#line 1955 "parser.tab.c"
     break;
 
-  case 74:
-#line 207 "parser.y"
-                                     {
-        yyerrok;
-        yyclearin;}
-#line 1965 "parser.tab.c"
+  case 69:
+#line 220 "parser.y"
+                                       {production_print("cond -> ID_OU_FUNC OP_RELACIONAL LITERAL"); checkType((yyvsp[-2].str), "literal");}
+#line 1961 "parser.tab.c"
     break;
 
-  case 75:
-#line 210 "parser.y"
-                                 {
-        yyerrok;
-        yyclearin;}
+  case 70:
+#line 221 "parser.y"
+                                      {production_print("cond -> NUMERO OP_RELACIONAL ID_OU_FUNC"); checkType((yyvsp[0].str), "inteiro");}
+#line 1967 "parser.tab.c"
+    break;
+
+  case 71:
+#line 222 "parser.y"
+                                  {production_print("cond -> NUMERO OP_RELACIONAL NUMERO");}
 #line 1973 "parser.tab.c"
     break;
 
-  case 76:
-#line 213 "parser.y"
-                          {
-        yyerrok;
-        yyclearin;}
-#line 1981 "parser.tab.c"
+  case 72:
+#line 223 "parser.y"
+                                   {error++;printf("\033[31mErro:%d:%d: Tipo de '%s' esperado: 'inteiro', mas '%s' é: 'real'\n", line_num, col_num, (yyvsp[-2].str), (yyvsp[0].str));}
+#line 1979 "parser.tab.c"
     break;
 
-  case 77:
-#line 216 "parser.y"
-                                 {
-        yyerrok;
-        yyclearin;}
-#line 1989 "parser.tab.c"
+  case 73:
+#line 224 "parser.y"
+                                   {production_print("cond -> NUMERO OP_RELACIONAL LITERAL");error++;printf("\033[31mErro:%d:%d: Tipo de '%s' esperado: 'inteiro', mas '%s' é: 'literal'\n", line_num, col_num, (yyvsp[-2].str), (yyvsp[0].str));}
+#line 1985 "parser.tab.c"
     break;
 
-  case 78:
-#line 219 "parser.y"
-                                  {
-        yyerrok;
-        yyclearin;}
+  case 74:
+#line 225 "parser.y"
+                                       {checkType((yyvsp[0].str), "real");}
+#line 1991 "parser.tab.c"
+    break;
+
+  case 75:
+#line 226 "parser.y"
+                                   {error++;printf("\033[31mErro:%d:%d: Tipo de '%s' esperado: 'real', mas '%s' é: 'inteiro'\n", line_num, col_num, (yyvsp[-2].str), (yyvsp[0].str));}
 #line 1997 "parser.tab.c"
     break;
 
+  case 76:
+#line 227 "parser.y"
+                                    {}
+#line 2003 "parser.tab.c"
+    break;
+
+  case 77:
+#line 228 "parser.y"
+                                    {error++;printf("\033[31mErro:%d:%d: Tipo de '%s' esperado: 'real', mas '%s' é: 'literal'\n", line_num, col_num, (yyvsp[-2].str), (yyvsp[0].str));}
+#line 2009 "parser.tab.c"
+    break;
+
+  case 78:
+#line 229 "parser.y"
+                                       {production_print("cond -> LITERAL OP_RELACIONAL ID_OU_FUNC");checkType((yyvsp[0].str), "literal");}
+#line 2015 "parser.tab.c"
+    break;
+
   case 79:
-#line 222 "parser.y"
-                            {
-        yyerrok;
-        yyclearin;}
-#line 2005 "parser.tab.c"
+#line 230 "parser.y"
+                                   {production_print("cond -> LITERAL OP_RELACIONAL NUMERO"); error++;printf("\033[31mErro:%d:%d: Tipo de '%s' esperado: 'literal', mas '%s' é: 'inteiro'\n", line_num, col_num, (yyvsp[-2].str), (yyvsp[0].str));}
+#line 2021 "parser.tab.c"
     break;
 
   case 80:
-#line 225 "parser.y"
-                                  {
-        yyerrok;
-        yyclearin;}
-#line 2013 "parser.tab.c"
+#line 231 "parser.y"
+                                    {error++;printf("\033[31mErro:%d:%d: Tipo de '%s' esperado: 'literal', mas '%s' é: 'real'\n", line_num, col_num, (yyvsp[-2].str), (yyvsp[0].str));}
+#line 2027 "parser.tab.c"
     break;
 
   case 81:
-#line 231 "parser.y"
+#line 232 "parser.y"
+                                    {production_print("cond -> LITERAL OP_RELACIONAL LITERAL");}
+#line 2033 "parser.tab.c"
+    break;
+
+  case 82:
+#line 233 "parser.y"
+                                     {
+        yyerrok;
+        yyclearin;}
+#line 2041 "parser.tab.c"
+    break;
+
+  case 83:
+#line 236 "parser.y"
+                                  {
+        yyerrok;
+        yyclearin;}
+#line 2049 "parser.tab.c"
+    break;
+
+  case 84:
+#line 239 "parser.y"
+                                     {
+        yyerrok;
+        yyclearin;}
+#line 2057 "parser.tab.c"
+    break;
+
+  case 85:
+#line 242 "parser.y"
+                                 {
+        yyerrok;
+        yyclearin;}
+#line 2065 "parser.tab.c"
+    break;
+
+  case 86:
+#line 245 "parser.y"
+                          {
+        yyerrok;
+        yyclearin;}
+#line 2073 "parser.tab.c"
+    break;
+
+  case 87:
+#line 248 "parser.y"
+                                 {
+        yyerrok;
+        yyclearin;}
+#line 2081 "parser.tab.c"
+    break;
+
+  case 88:
+#line 251 "parser.y"
+                                  {
+        yyerrok;
+        yyclearin;}
+#line 2089 "parser.tab.c"
+    break;
+
+  case 89:
+#line 254 "parser.y"
+                            {
+        yyerrok;
+        yyclearin;}
+#line 2097 "parser.tab.c"
+    break;
+
+  case 90:
+#line 257 "parser.y"
+                                  {
+        yyerrok;
+        yyclearin;}
+#line 2105 "parser.tab.c"
+    break;
+
+  case 91:
+#line 263 "parser.y"
                {production_print("nome_funcao -> ID_OU_FUNC");}
-#line 2019 "parser.tab.c"
+#line 2111 "parser.tab.c"
     break;
 
 
-#line 2023 "parser.tab.c"
+#line 2115 "parser.tab.c"
 
       default: break;
     }
@@ -2251,7 +2343,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 237 "parser.y"
+#line 269 "parser.y"
 
 
 
@@ -2263,6 +2355,161 @@ void production_print(const char* production) {
     if(verb == 1){
         fprintf(stdout, "Produção utilizada: %s\n", production);
     }
+}
+
+int checkType( char *name, char *encounteredType) {
+    char *c = get_type(sym_table, name, escopo);
+    if(strcmp(c,"error") == 0){
+        error++;
+        return 1;
+    }
+    if(strcmp(c,"Não encontrado") == 0){
+        error++;
+        printf("\033[31mErro:%d:%d: Identificador '%s' não declarado\033[0m\n", line_num, col_num, name);
+        return 1;
+    }
+    if(strcmp(c, encounteredType) == 0){
+        if(verbose == 1){
+            printf("Na linha %d, coluna %d: Tipo de %s compatível com operador\n", line_num, col_num, name);
+        }
+        return 0;
+    }else{
+        error++;
+        printf("\033[31mErro:%d:%d: Tipo de '%s' esperado: '%s', mas encontrado: '%s'\033[0m\n", line_num, col_num, name, c, encounteredType);
+        return 2;
+    }
+}
+
+int idsCheckType( char *name, char *name2) {
+    char *c = get_type(sym_table, name, escopo);
+    char *t = get_type(sym_table, name2, escopo);
+    if(strcmp(c,"Não encontrado") == 0 || strcmp(t,"Não encontrado") == 0){
+        if(strcmp(c,"Não encontrado") == 0){
+            error++;
+            printf("\033[31mErro:%d:%d: Identificador '%s' não declarado\033[0m\n", line_num, col_num, name);
+        }
+        if(strcmp(t,"Não encontrado") == 0){
+            error++;
+            printf("\033[31mErro:%d:%d: Identificador '%s' não declarado\033[0m\n", line_num, col_num, name2);
+        }
+        return 1;
+    }
+    if(strcmp(c, t) == 0){
+        if(verbose == 1){
+            printf("Na linha %d, coluna %d: Tipo de %s compatível com tipo de %s\033", line_num, col_num, name, name2);
+        }
+        return 0;
+    }else{
+        error++;
+        printf("\033[31mErro:%d:%d: Tipo de '%s' esperado: '%s', mas '%s' possui tipo: '%s'\033[0m\n", line_num, col_num, name, c, name2, t);
+        return 2;
+    }
+}
+char* idsMathCheck(char *ar1, char *ar2, char *op){
+    char *c = get_type(sym_table, ar1, escopo);
+    char *t = get_type(sym_table, ar2, escopo);
+    char *c1 = get_value(sym_table, ar1, escopo);
+    char *t1 = get_value(sym_table, ar2, escopo);
+    if(strcmp(c,"Não encontrado") == 0 || strcmp(t,"Não encontrado") == 0){
+        if(strcmp(c,"Não encontrado") == 0){
+            error++;
+            printf("\033[31mErro:%d:%d: Identificador '%s' não declarado\033[0m\n", line_num, col_num, ar1);
+        }
+        if(strcmp(t,"Não encontrado") == 0){
+            error++;
+            printf("\033[31mErro:%d:%d: Identificador '%s' não declarado\033[0m\n", line_num, col_num, ar2);
+        }
+        return "error";
+    }
+    if(strcmp(c, t) != 0){
+        error++;
+        printf("\033[31mErro:%d:%d: Tipo de '%s' esperado: '%s' para realizar a operação: '%s', mas '%s' possui tipo: '%s'\033[0m\n", line_num, col_num, ar1, c, op, ar2, t);
+        return "error";
+    }else{
+        if(strcmp(op,"/") == 0){
+            if(strcmp(t1,"0") == 0 || strcmp(t1,"0.0") == 0 ){
+                error++;
+                printf("\033[31mErro:%d:%d: Divisão por 0 detectada em: %s/%s\033[0m\n", line_num, col_num, ar1, ar2);
+                return "error";
+            }
+            if(c1 == "NULL" || t1 == "NULL"){
+                if(c1 == "NULL"){
+                    error++;
+                    printf("\033[31mErro:%d:%d: %s é NULL\033[0m\n", line_num, col_num, c);
+                    return "error";
+                }
+                if(t1 == "NULL"){
+                    error++;
+                    printf("\033[31mErro:%d:%d: %s é NULL\033[0m\n", line_num, col_num, t);
+                    return "error";
+                }
+            }
+        }
+        if(verbose == 1){
+            printf("Na linha %d, coluna %d: Tipo de %s compatível com tipo de %s e operação aritimética viável\n", line_num, col_num, ar1, ar2);
+        }
+        return c;
+    }
+}
+
+char* idMathCheck(char *ar1, char *ar2, char *op, char *ar2type){
+    char *c = get_type(sym_table, ar1, escopo);
+    char *c1 = get_value(sym_table, ar1, escopo);
+    if(strcmp(c,"Não encontrado") == 0){
+        if(strcmp(c,"Não encontrado") == 0){
+            error++;
+            printf("\033[31mErro:%d:%d: Identificador '%s' não declarado\033[0m\n", line_num, col_num, ar1);
+        }
+        return "error";
+    }
+    if(strcmp(c, ar2type) != 0){
+        error++;
+        printf("\033[31mErro:%d:%d: Tipo de '%s' esperado: '%s' para realizar a operação: '%s', mas '%s' possui tipo: '%s'\033[0m\n", line_num, col_num, ar1, c, op, ar2, ar2type);
+        return "error";
+    }else{
+        if(strcmp(op,"/") == 0){
+            if(strcmp(ar2,"0") == 0 || strcmp(ar2,"0.0") == 0 ){
+                error++;
+                printf("\033[31mErro:%d:%d: Divisão por 0 detectada em: %s/%s\033[0m\n", line_num, col_num, ar1, ar2);
+                return "error";
+            }
+            if(strcmp(ar2,"NULL") == 0){                
+                error++;
+                printf("\033[31mErro:%d:%d: %s é NULL\033[0m\n", line_num, col_num, c);
+                return "error";
+            }
+        }
+        if(verbose == 1){
+            printf("Na linha %d, coluna %d: Tipo de %s compatível com tipo de %s e operação aritimética viável\n", line_num, col_num, ar1, ar2);
+        }
+        return c;
+    }
+}
+
+char* mathCheck(char *ar1, char *ar2, char *op){
+    char *c = get_type(sym_table, ar1, escopo);
+    char *c1 = get_value(sym_table, ar1, escopo);
+    if(strcmp(op,"/") == 0){
+        if(strcmp(ar2,"0") == 0 || strcmp(ar2,"0.0") == 0 ){
+            error++;
+            printf("\033[31mErro:%d:%d: Divisão por 0 detectada em: %s/%s\033[0m\n", line_num, col_num, ar1, ar2);
+            return "error";
+        }
+        if(strcmp(c1 ,"NULL") == 0){                
+            error++;
+            printf("\033[31mErro:%d:%d: %s é NULL\033[0m\n", line_num, col_num, c);
+            return "error";
+        }
+        if(strcmp(ar2,"NULL") == 0){                
+            error++;
+            printf("\033[31mErro:%d:%d: %s é NULL\033[0m\n", line_num, col_num, c);
+            return "error";
+        }
+    }
+    if(verbose == 1){
+        printf("Na linha %d, coluna %d: Tipo de %s compatível com tipo de %s e operação aritimética viável\n", line_num, col_num, ar1, ar2);
+    }
+    return c;
 }
 
 int main(int argc, char **argv) {
@@ -2277,21 +2524,24 @@ int main(int argc, char **argv) {
         }
         yyin = file;
         if (yyin == NULL) {
-            printf("File not found!\n");
+            printf("\033[31mFile not found!\033[0m\n");
             exit(1);
         }
     }
     out=yyparse();
 
+    if(error == 0){
+        printf("Compilado com sucesso!\n");
+    }else{
+        printf("\033[31mCompilador falhou!\033[0m\n");
+    }
+    
+
     if(!out) {// yyparse == 0 - parsing completed
-        printf("Syntax analyzer finished succesfully.\n");
         fclose(yyin);
-        printf("File closed succesfully\n");
     }
     else { //yyparse()==1 - could not complete parsing
-        printf("Syntax analyzer failed\n");
         fclose(yyin); // close input file
-        printf("File closed succesfully\n");
     }
 
     free_symbol_table(sym_table);

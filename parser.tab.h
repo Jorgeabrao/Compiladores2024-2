@@ -57,29 +57,30 @@ extern int yydebug;
     ARGS = 263,
     FIMARGS = 264,
     ESCREVA = 265,
-    INTEIRO = 266,
-    REAL = 267,
-    CARACTERE = 268,
-    SE = 269,
-    ENTAO = 270,
-    FIMSE = 271,
-    ENQUANTO = 272,
-    FACA = 273,
-    FIMENQUANTO = 274,
-    CHAMADA = 275,
-    SENAO = 276,
-    ID_OU_FUNC = 277,
-    NUMERO = 278,
-    LITERAL = 279,
-    OP_RELACIONAL = 280,
-    OP_ARITMETICO = 281,
-    ATRIBUICAO = 282,
-    ABRE_PAR = 283,
-    FECHA_PAR = 284,
-    VIRGULA = 285,
-    PONTO_E_VIRG = 286,
-    COMENTARIO = 287,
-    FIM_DE_ARQ = 288
+    REAL = 266,
+    CARACTERE = 267,
+    SE = 268,
+    ENTAO = 269,
+    FIMSE = 270,
+    ENQUANTO = 271,
+    FACA = 272,
+    FIMENQUANTO = 273,
+    CHAMADA = 274,
+    SENAO = 275,
+    ID_OU_FUNC = 276,
+    INTEIRO = 277,
+    LITERAL = 278,
+    OP_RELACIONAL = 279,
+    OP_ARITMETICO = 280,
+    ATRIBUICAO = 281,
+    ABRE_PAR = 282,
+    FECHA_PAR = 283,
+    VIRGULA = 284,
+    PONTO_E_VIRG = 285,
+    COMENTARIO = 286,
+    FIM_DE_ARQ = 287,
+    RNUMERO = 288,
+    NUMERO = 289
   };
 #endif
 
@@ -87,13 +88,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 26 "parser.y"
+#line 34 "parser.y"
 
     char *str;
     int num;
     float fnum;
 
-#line 97 "parser.tab.h"
+#line 98 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

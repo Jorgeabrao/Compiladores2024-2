@@ -351,8 +351,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 34
-#define YY_END_OF_BUFFER 35
+#define YY_NUM_RULES 35
+#define YY_END_OF_BUFFER 36
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -362,13 +362,13 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[126] =
     {   0,
-        0,    0,   35,   33,   31,   20,   33,   27,   28,   25,
-       29,   22,   30,   24,   26,   24,   19,   21,   21,   21,
-       21,   21,   21,   21,   21,   21,   33,   31,    0,   23,
-        0,    0,   22,   22,   22,   24,   21,   21,   21,   21,
+        0,    0,   36,   34,   32,   20,   34,   28,   29,   26,
+       30,   22,   31,   25,   27,   25,   19,   21,   21,   21,
+       21,   21,   21,   21,   21,   21,   34,   32,    0,   24,
+        0,    0,   22,   23,   23,   25,   21,   21,   21,   21,
        21,   21,   21,   21,   21,   21,   21,   12,   21,    0,
-       32,   22,   22,   21,   21,   21,   21,   21,   21,   21,
-       21,   21,   21,   21,   21,   21,   21,   22,    6,   21,
+       33,   23,   23,   21,   21,   21,   21,   21,   21,   21,
+       21,   21,   21,   21,   21,   21,   21,   23,    6,   21,
        21,   21,   21,   21,   17,   21,   21,   21,   21,   21,
        21,   10,   21,   21,    5,   21,    3,   21,   13,   21,
        21,   21,   21,   15,   21,   21,   21,   14,   21,   21,
@@ -532,16 +532,28 @@ char *yytext;
 
 int line_num = 1;
 int col_num = 1;
-char *escopo = "global";
+char *escopo = "principal";
 int categoria = 0;
+int categoriaF = 0;
 int eof = 0;
 int func = 0;
+extern int error;
 
 void update_position(const char *text);
 struct hashMap *sym_table;
 
-#line 544 "lex.yy.c"
-#line 545 "lex.yy.c"
+int funcao_tipo(char* t, char* escopoL){
+    if(lookup_symbol(sym_table, t, escopoL) == NULL){
+        printf("\033[31mErro:%d:%d: '%s' não foi declarado\n\033[0m", line_num, col_num, t);
+    }else{
+        if(get_type(sym_table, t, escopoL) != get_type(sym_table, escopoL, "principal")){
+            printf("\033[31mErro:%d:%d: função '%s' precisa retornar '%s' porem '%s' é '%s'\n\033[0m", line_num, col_num, escopoL, get_type(sym_table, escopoL, "principal"), t, get_type(sym_table, t, escopoL));
+        }
+    }
+}   
+
+#line 556 "lex.yy.c"
+#line 557 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -758,9 +770,9 @@ YY_DECL
 		}
 
 	{
-#line 24 "lexical.l"
+#line 36 "lexical.l"
 
-#line 764 "lex.yy.c"
+#line 776 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -819,7 +831,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 25 "lexical.l"
+#line 37 "lexical.l"
 { 
     func++;
     categoria = 1; 
@@ -830,17 +842,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 32 "lexical.l"
+#line 44 "lexical.l"
 { 
     update_position(yytext); 
     yylval.str = strdup(yytext); 
-    escopo = "global";
+    escopo = "principal";
     return FIMFUNCAO; 
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 38 "lexical.l"
+#line 50 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -849,8 +861,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 43 "lexical.l"
+#line 55 "lexical.l"
 { 
+    categoria = 7;
     yylval.str = strdup(yytext); 
     update_position(yytext);
     return RETORNA; 
@@ -858,8 +871,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 48 "lexical.l"
-{ 
+#line 61 "lexical.l"
+{
+    categoriaF = 1;
     yylval.str = strdup(yytext); 
     update_position(yytext);
     return TIPO; 
@@ -867,8 +881,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 53 "lexical.l"
+#line 67 "lexical.l"
 { 
+    categoria = 6;
     yylval.str = strdup(yytext); 
     update_position(yytext); 
     return ARGS; 
@@ -876,7 +891,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 58 "lexical.l"
+#line 73 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -885,7 +900,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 63 "lexical.l"
+#line 78 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -894,7 +909,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 68 "lexical.l"
+#line 83 "lexical.l"
 { 
     categoria = 3; 
     yylval.str = strdup(yytext); 
@@ -904,7 +919,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 74 "lexical.l"
+#line 89 "lexical.l"
 {
     categoria = 4; 
     yylval.str = strdup(yytext); 
@@ -914,7 +929,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 80 "lexical.l"
+#line 95 "lexical.l"
 { 
     categoria = 5; 
     yylval.str = strdup(yytext); 
@@ -924,7 +939,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 86 "lexical.l"
+#line 101 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -933,7 +948,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 91 "lexical.l"
+#line 106 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -942,7 +957,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 96 "lexical.l"
+#line 111 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -951,7 +966,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 101 "lexical.l"
+#line 116 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -960,7 +975,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 106 "lexical.l"
+#line 121 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -969,7 +984,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 111 "lexical.l"
+#line 126 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext); 
@@ -978,7 +993,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 116 "lexical.l"
+#line 131 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -987,7 +1002,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 121 "lexical.l"
+#line 136 "lexical.l"
 { 
     categoria = 2; 
     yylval.str = strdup(yytext); 
@@ -998,7 +1013,7 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 127 "lexical.l"
+#line 142 "lexical.l"
 { 
     line_num++; 
     col_num = 1; 
@@ -1006,21 +1021,54 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 131 "lexical.l"
+#line 146 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
     if(categoria == 1){
-        insert_symbol(sym_table, yytext, "funcao", escopo);
+        if(lookup_symbol(sym_table, yytext, escopo) != NULL){
+            printf("\033[31mErro:%d:%d: Identificador '%s' já declarado em função '%s'\n\033[0m", line_num, col_num, yytext, escopo);
+        }else{
+            insert_symbol(sym_table, yytext, "funcao", escopo);
+        }
         escopo = strdup(yytext);
     } else if(categoria == 2){
-        insert_symbol(sym_table, yytext, "chamada", escopo);
+        if(lookup_symbol(sym_table, yytext, escopo) == NULL) printf("\033[31mErro:%d:%d: função '%s' não declarada\n\033[0m", line_num, col_num, yytext);
+        error++;
     } else if(categoria == 3){
-        insert_symbol(sym_table, yytext, "inteiro", escopo);
+        if(lookup_symbol(sym_table, yytext, escopo) != NULL){
+             printf("\033[31mErro:%d:%d: Identificador '%s' já declarado em função '%s'\n\033[0m", line_num, col_num, yytext, escopo);
+        }else{
+            insert_symbol(sym_table, yytext, "inteiro", escopo);
+        }
+        if(categoriaF == 1 && escopo != "principal"){
+            update_type(sym_table, escopo, "principal", "inteiro");
+            categoriaF = 0;
+        }
     } else if(categoria == 4){
-        insert_symbol(sym_table, yytext, "real", escopo);
+        if(lookup_symbol(sym_table, yytext, escopo) != NULL){
+             printf("\033[31mErro:%d:%d: Identificador '%s' já declarado em função '%s'\n\033[0m", line_num, col_num, yytext, escopo);
+        }else{
+            insert_symbol(sym_table, yytext, "real", escopo);
+        }
+        if(categoriaF == 1 && escopo != "principal"){
+            update_type(sym_table, escopo, "principal", "real");
+            categoriaF = 0;
+        }
     } else if(categoria == 5){
-        insert_symbol(sym_table, yytext, "literal", escopo);
+        if(lookup_symbol(sym_table, yytext, escopo) != NULL){
+             printf("\033[31mErro:%d:%d: Identificador '%s' já declarado em função '%s'\n\033[0m", line_num, col_num, yytext, escopo);
+        }else{
+            insert_symbol(sym_table, yytext, "literal", escopo);
+        }
+        if(categoriaF == 1 && escopo != "principal"){
+            update_type(sym_table, escopo, "principal", "literal");
+            categoriaF = 0;
+        }
+    }else if(categoria == 6){
+        insert_symbol(sym_table, yytext, "arg", escopo);
+    }else if(categoria == 7){
+        funcao_tipo(yytext, escopo);
     } else {
         insert_symbol(sym_table, yytext, "void", escopo);
     }
@@ -1029,7 +1077,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 150 "lexical.l"
+#line 198 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -1038,70 +1086,79 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 155 "lexical.l"
+#line 203 "lexical.l"
+{ 
+    yylval.str = strdup(yytext); 
+    update_position(yytext);
+    return RNUMERO;
+}
+	YY_BREAK
+case 24:
+YY_RULE_SETUP
+#line 208 "lexical.l"
 {
     yylval.str = strdup(yytext); 
     update_position(yytext); 
     return LITERAL; 
 }
 	YY_BREAK
-case 24:
+case 25:
 YY_RULE_SETUP
-#line 160 "lexical.l"
+#line 213 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
     return OP_RELACIONAL;
 }
 	YY_BREAK
-case 25:
+case 26:
 YY_RULE_SETUP
-#line 165 "lexical.l"
+#line 218 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
     return OP_ARITMETICO; 
 }
 	YY_BREAK
-case 26:
+case 27:
 YY_RULE_SETUP
-#line 170 "lexical.l"
+#line 223 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
     return ATRIBUICAO; 
 }
 	YY_BREAK
-case 27:
+case 28:
 YY_RULE_SETUP
-#line 175 "lexical.l"
+#line 228 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
     return ABRE_PAR; 
 }
 	YY_BREAK
-case 28:
+case 29:
 YY_RULE_SETUP
-#line 180 "lexical.l"
+#line 233 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
     return FECHA_PAR; 
 }
 	YY_BREAK
-case 29:
+case 30:
 YY_RULE_SETUP
-#line 185 "lexical.l"
+#line 238 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
     return VIRGULA; 
 }
 	YY_BREAK
-case 30:
+case 31:
 YY_RULE_SETUP
-#line 190 "lexical.l"
+#line 243 "lexical.l"
 { 
     categoria = 0; 
     yylval.str = strdup(yytext); 
@@ -1109,16 +1166,16 @@ YY_RULE_SETUP
     return PONTO_E_VIRG; 
 }
 	YY_BREAK
-case 31:
+case 32:
 YY_RULE_SETUP
-#line 196 "lexical.l"
+#line 249 "lexical.l"
 { 
     update_position(yytext);
 }
 	YY_BREAK
-case 32:
+case 33:
 YY_RULE_SETUP
-#line 199 "lexical.l"
+#line 252 "lexical.l"
 { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
@@ -1126,25 +1183,25 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 204 "lexical.l"
+#line 257 "lexical.l"
 {
     eof = 1;
     return FIM_DE_ARQ; 
 }
 	YY_BREAK
-case 33:
+case 34:
 YY_RULE_SETUP
-#line 208 "lexical.l"
+#line 261 "lexical.l"
 { 
     fprintf(stderr, "\033[31mLexical error: Invalid Token, LEXEMA: %s, LINHA: %d, COLUNA: %d\033[0m\n", yytext, line_num, col_num); 
 }
 	YY_BREAK
-case 34:
+case 35:
 YY_RULE_SETUP
-#line 213 "lexical.l"
+#line 266 "lexical.l"
 ECHO;
 	YY_BREAK
-#line 1148 "lex.yy.c"
+#line 1205 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2147,7 +2204,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 213 "lexical.l"
+#line 266 "lexical.l"
 
 
 void update_position(const char *text) {

@@ -26,11 +26,11 @@ int hashFunction(struct hashMap* mp, char* name, char* scope)
 }
 
 // Função para inicializar um nó (símbolo)
-void setNode(struct node* node, char* name, char* type, char* scope)
-{
+void setNode(struct node* node, char* name, char* type, char* scope) {
     node->name = strdup(name);  // Copia o nome do identificador
     node->type = strdup(type);  // Copia o tipo do identificador
     node->scope = strdup(scope);  // Copia o escopo do identificador
+    node->value = strdup("NULL");  // Inicializa o valor como "NULL"
     node->next = NULL;  // Inicializa o próximo nó como NULL
     return;
 }
@@ -52,7 +52,6 @@ void insert_symbol(struct hashMap* mp, char* name, char* type, char* scope)
 {
     // Calcula o índice na tabela hash usando nome e escopo
     int bucketIndex = hashFunction(mp, name, scope);
-
     // Verifica se o símbolo já existe para evitar duplicatas
     struct node* current = mp->arr[bucketIndex];
     while (current != NULL) {
@@ -120,14 +119,13 @@ void delete_symbol(struct hashMap* mp, char* name, char* scope)
 }
 
 // Função para exibir a tabela de símbolos (para debug)
-void print_symbol_table(struct hashMap* mp)
-{
+void print_symbol_table(struct hashMap* mp) {
     printf("Tabela de Símbolos:\n");
     for (int i = 0; i < mp->capacity; i++) {
         struct node* current = mp->arr[i];
         if (current != NULL) {
             while (current != NULL) {
-                printf("  Nome: %s, Categoria: %s, Escopo: %s\n", current->name, current->type, current->scope);
+                printf("  Nome: %s, Categoria: %s, Escopo: %s, Valor: %s\n", current->name, current->type, current->scope, current->value);
                 current = current->next;
             }
         }
@@ -150,4 +148,61 @@ void free_symbol_table(struct hashMap* mp)
     }
     free(mp->arr);
     free(mp);
+}
+void update_value(struct hashMap* mp, char* name, char* scope, char* newValue) {
+    // Busca o símbolo na tabela
+    struct node* targetNode = lookup_symbol(mp, name, scope);
+    
+    // Verifica se o símbolo foi encontrado
+    if (targetNode == NULL) {
+        printf("\033[31mErro: teste1ID '%s' na função '%s' não declarado.\033[0m\n", name, scope);
+        return;
+    }
+
+    // Atualiza o campo 'value'
+    free(targetNode->value); // Libera a memória antiga do valor
+    targetNode->value = strdup(newValue); // Copia o novo valor
+}
+
+void update_type(struct hashMap* mp, char* name, char* scope, char* newValue) {
+    // Busca o símbolo na tabela
+    struct node* targetNode = lookup_symbol(mp, name, scope);
+    
+    // Verifica se o símbolo foi encontrado
+    if (targetNode == NULL) {
+        printf("\033[31mErro: TesteID '%s' na função '%s' não declarado.\033[0m\n", name, scope);
+        return;
+    }
+
+    // Atualiza o campo 'value'
+    free(targetNode->type); // Libera a memória antiga do valor
+    targetNode->type = strdup(newValue); // Copia o novo valor
+}
+
+char* get_type(struct hashMap* mp, char* name, char* scope) {
+    // Busca o símbolo na tabela
+    struct node* targetNode = lookup_symbol(mp, name, scope);
+
+    // Verifica se o símbolo foi encontrado
+    if (targetNode == NULL) {
+        printf("\033[31mErro: teste2ID '%s' na função '%s' não declarado.\033[0m\n", name, scope);
+        return NULL; // Retorna NULL se o símbolo não for encontrado
+    }
+
+    // Retorna o tipo do símbolo
+    return targetNode->type;
+}
+
+char* get_value(struct hashMap* mp, char* name, char* scope) {
+    // Busca o símbolo na tabela
+    struct node* targetNode = lookup_symbol(mp, name, scope);
+
+    // Verifica se o símbolo foi encontrado
+    if (targetNode == NULL) {
+        printf("\033[31Erro: Símbolo '%s' na função '%s' não declarado.\033[0m\n", name, scope);
+        return NULL; // Retorna NULL se o símbolo não for encontrado
+    }
+
+    // Retorna o valor do símbolo
+    return targetNode->value;
 }

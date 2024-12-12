@@ -6,13 +6,25 @@
 
 int line_num = 1;
 int col_num = 1;
-char *escopo = "global";
+char *escopo = "principal";
 int categoria = 0;
+int categoriaF = 0;
 int eof = 0;
 int func = 0;
+extern int error;
 
 void update_position(const char *text);
 struct hashMap *sym_table;
+
+int funcao_tipo(char* t, char* escopoL){
+    if(lookup_symbol(sym_table, t, escopoL) == NULL){
+        printf("\033[31mErro:%d:%d: '%s' não foi declarado\n\033[0m", line_num, col_num, t);
+    }else{
+        if(get_type(sym_table, t, escopoL) != get_type(sym_table, escopoL, "principal")){
+            printf("\033[31mErro:%d:%d: função '%s' precisa retornar '%s' porem '%s' é '%s'\n\033[0m", line_num, col_num, escopoL, get_type(sym_table, escopoL, "principal"), t, get_type(sym_table, t, escopoL));
+        }
+    }
+}   
 
 %}
 
@@ -32,7 +44,7 @@ whitespace  [ \t\r]
 "fimfuncao" { 
     update_position(yytext); 
     yylval.str = strdup(yytext); 
-    escopo = "global";
+    escopo = "principal";
     return FIMFUNCAO; 
 }
 "chama" { 
@@ -41,16 +53,19 @@ whitespace  [ \t\r]
     return CHAMA; 
 }
 "retorna" { 
+    categoria = 7;
     yylval.str = strdup(yytext); 
     update_position(yytext);
     return RETORNA; 
 }
-"tipo" { 
+"tipo" {
+    categoriaF = 1;
     yylval.str = strdup(yytext); 
     update_position(yytext);
     return TIPO; 
 }
 "args" { 
+    categoria = 6;
     yylval.str = strdup(yytext); 
     update_position(yytext); 
     return ARGS; 
@@ -132,25 +147,63 @@ whitespace  [ \t\r]
     yylval.str = strdup(yytext); 
     update_position(yytext);
     if(categoria == 1){
-        insert_symbol(sym_table, yytext, "funcao", escopo);
+        if(lookup_symbol(sym_table, yytext, escopo) != NULL){
+            printf("\033[31mErro:%d:%d: Identificador '%s' já declarado em função '%s'\n\033[0m", line_num, col_num, yytext, escopo);
+        }else{
+            insert_symbol(sym_table, yytext, "funcao", escopo);
+        }
         escopo = strdup(yytext);
     } else if(categoria == 2){
-        insert_symbol(sym_table, yytext, "chamada", escopo);
+        if(lookup_symbol(sym_table, yytext, escopo) == NULL) printf("\033[31mErro:%d:%d: função '%s' não declarada\n\033[0m", line_num, col_num, yytext);
+        error++;
     } else if(categoria == 3){
-        insert_symbol(sym_table, yytext, "inteiro", escopo);
+        if(lookup_symbol(sym_table, yytext, escopo) != NULL){
+             printf("\033[31mErro:%d:%d: Identificador '%s' já declarado em função '%s'\n\033[0m", line_num, col_num, yytext, escopo);
+        }else{
+            insert_symbol(sym_table, yytext, "inteiro", escopo);
+        }
+        if(categoriaF == 1 && escopo != "principal"){
+            update_type(sym_table, escopo, "principal", "inteiro");
+            categoriaF = 0;
+        }
     } else if(categoria == 4){
-        insert_symbol(sym_table, yytext, "real", escopo);
+        if(lookup_symbol(sym_table, yytext, escopo) != NULL){
+             printf("\033[31mErro:%d:%d: Identificador '%s' já declarado em função '%s'\n\033[0m", line_num, col_num, yytext, escopo);
+        }else{
+            insert_symbol(sym_table, yytext, "real", escopo);
+        }
+        if(categoriaF == 1 && escopo != "principal"){
+            update_type(sym_table, escopo, "principal", "real");
+            categoriaF = 0;
+        }
     } else if(categoria == 5){
-        insert_symbol(sym_table, yytext, "literal", escopo);
+        if(lookup_symbol(sym_table, yytext, escopo) != NULL){
+             printf("\033[31mErro:%d:%d: Identificador '%s' já declarado em função '%s'\n\033[0m", line_num, col_num, yytext, escopo);
+        }else{
+            insert_symbol(sym_table, yytext, "literal", escopo);
+        }
+        if(categoriaF == 1 && escopo != "principal"){
+            update_type(sym_table, escopo, "principal", "literal");
+            categoriaF = 0;
+        }
+    }else if(categoria == 6){
+        insert_symbol(sym_table, yytext, "arg", escopo);
+    }else if(categoria == 7){
+        funcao_tipo(yytext, escopo);
     } else {
         insert_symbol(sym_table, yytext, "void", escopo);
     }
     return ID_OU_FUNC;
 }
-{digit}+(\.{digit}+)?(E|e+|-?{digit}+)? { 
+{digit}+ { 
     yylval.str = strdup(yytext); 
     update_position(yytext);
     return NUMERO;
+}
+{digit}+(\.{digit}+)?(E|e+|-?{digit}+)? { 
+    yylval.str = strdup(yytext); 
+    update_position(yytext);
+    return RNUMERO;
 }
 \"({letter}|{digit}|{symbol}|{whitespace}|;)*\" {
     yylval.str = strdup(yytext); 

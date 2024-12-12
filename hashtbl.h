@@ -10,6 +10,7 @@ struct node {
     char* name;   // Nome do identificador (variável, função, etc.)
     char* type;   // Tipo do identificador (variável, função, número, etc.)
     char* scope;  // Escopo do identificador (global, local, etc.)
+    char* value;  // Valor associado ao identificador
     struct node* next;  // Ponteiro para o próximo nó (para lidar com colisões)
 };
 
@@ -43,4 +44,11 @@ void print_symbol_table(struct hashMap* mp);
 // Liberar memória da tabela de símbolos
 void free_symbol_table(struct hashMap* mp);
 
+char* get_type(struct hashMap* mp, char* name, char* scope);
+
+void update_value(struct hashMap* mp, char* name, char* scope, char* newValue);
+
+char* get_value(struct hashMap* mp, char* name, char* scope);
+
+void update_type(struct hashMap* mp, char* name, char* scope, char* newValue);
 #endif
